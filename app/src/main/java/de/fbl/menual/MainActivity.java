@@ -31,7 +31,7 @@ import com.google.gson.JsonParser;
 import java.util.Date;
 
 import de.fbl.menual.api.RetrofitInstance;
-import de.fbl.menual.api.TextDetection;
+import de.fbl.menual.api.ApiInterface;
 import de.fbl.menual.utils.CameraPreview;
 import de.fbl.menual.utils.Constants;
 import retrofit2.Call;
@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private Camera mCamera;
     private CameraPreview mPreview;
     private int rotation;
-    private TextDetection textDetection;
+    private ApiInterface apiInterface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mCamera.takePicture(null, null, mPicture);
+
+//                TODO: Just a sample call. Need to move from here
+                getNutrition("Big mac");
 
             }
         });
@@ -81,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mPreview);
         rotation = CameraPreview.correctCameraDisplayOrientation(MainActivity.this, mCamera);
-        textDetection = RetrofitInstance.getRetrofitInstance().create(TextDetection.class);
+        apiInterface = RetrofitInstance.getRetrofitInstance().create(ApiInterface.class);
     }
 
     @Override
@@ -163,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                                 "}, " +
                                 "\"features\":[" +
                                 "{" +
-                                "\"type\":\""+ Constants.OCR_TYPE+"\"" +
+                                "\"type\":\"" + Constants.OCR_TYPE + "\"" +
                                 "}" +
                                 "]" +
                                 "}" +
@@ -182,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 };
 
-                Call<JsonObject> callTextDetection = textDetection.detectText(httpQuery.toString());
+                Call<JsonObject> callTextDetection = apiInterface.detectText(httpQuery.toString());
                 callTextDetection.enqueue(callbackTextDetection);
 
             } catch (FileNotFoundException e) {
@@ -227,5 +230,31 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return mediaFile;
+    }
+
+    private void getNutrition(String foodName) {
+
+        JsonObject httpQuery = new JsonParser().parse(
+                "{" +
+                        "\"query\":" + "\"" + foodName + "\"" +
+                        ", " +
+                        "\"timezone\":\"US/Eastern\"" +
+                        "}").getAsJsonObject();
+
+        Callback<JsonObject> callbackGetNutrition = new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                System.out.println(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                System.out.println(t.getMessage());
+            }
+        };
+
+        Call<JsonObject> callGetNutrition = apiInterface.getNutrition(httpQuery.toString());
+        callGetNutrition.enqueue(callbackGetNutrition);
+
     }
 }

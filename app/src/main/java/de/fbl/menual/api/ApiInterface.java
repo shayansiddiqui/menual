@@ -7,9 +7,14 @@ import retrofit2.http.Body;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
-public interface TextDetection {
+public interface ApiInterface {
 
     @Headers("Content-Type: application/json")
-    @POST("./images:annotate?key=AIzaSyDPiH5XLmBEBD8b-PJneHS23mchGjbeldk")
+    @POST("/detectText")
     Call<JsonObject> detectText(@Body String body);
+
+    @Headers("Content-Type: application/javascript")
+    @POST("/getNutrition")
+    Call<JsonObject> getNutrition(@Body String body);
+
 }
