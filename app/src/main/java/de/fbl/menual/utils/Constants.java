@@ -1,5 +1,6 @@
 package de.fbl.menual.utils;
 
 public class Constants {
-    public static final String OCR_TYPE = "TEXT_DETECTION";
+        public static final String OCR_TYPE = "TEXT_DETECTION";
+        public static final String PREVIEW_IMAGE_KEY = "preview_image";
 }

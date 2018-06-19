@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="de.fbl.menual">
+
     <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-feature android:name="android.hardware.camera" />
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
-
-
 
     <application
         android:allowBackup="true"
@@ -25,11 +26,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DietPreferences"
-            android:parentActivityName=".MainActivity"
-            android:label="@string/title_activity_diet_preferences">
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"/>
+        <activity
+            android:name=".DietPreferences"
+            android:label="@string/title_activity_diet_preferences"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".TextSelection"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:label="@string/title_activity_text_selection"
+                android:value=".MainActivity" />
         </activity>
     </application>
 

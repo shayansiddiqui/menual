@@ -6,4 +6,5 @@
     <string name="action_logout">Log out</string>
     <string name="title_activity_diet_preferences">Diet Preferences</string>
     <string name="action_save">Save</string>
+    <string name="title_activity_text_selection">Select Food</string>
 </resources>

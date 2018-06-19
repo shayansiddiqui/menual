@@ -1,10 +1,12 @@
 package de.fbl.menual;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.hardware.Camera;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
@@ -24,6 +26,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 
 import android.util.Base64;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -33,6 +37,7 @@ import com.google.gson.JsonParser;
 import org.json.JSONObject;
 
 import java.util.Date;
+import java.util.List;
 
 import de.fbl.menual.api.RetrofitInstance;
 import de.fbl.menual.api.ApiInterface;
@@ -86,6 +91,10 @@ public class MainActivity extends AppCompatActivity {
         //*EDIT*//params.setFocusMode("continuous-picture");
         //It is better to use defined constraints as opposed to String, thanks to AbdelHady
         params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+
+        Camera.Size desiredSize = getPictureSize(params.getSupportedPictureSizes());
+        System.out.println(desiredSize.width);
+        params.setPictureSize(desiredSize.width, desiredSize.height);
         mCamera.setParameters(params);
 
 
@@ -102,6 +111,17 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    private Camera.Size getPictureSize(List<Camera.Size> sizes) {
+
+        for (Camera.Size size : sizes) {
+            if ((size.width * size.height) / 1024000 <= 2.5) {
+                return size;
+            }
+        }
+
+        return null;
     }
 
     @Override
@@ -136,12 +156,12 @@ public class MainActivity extends AppCompatActivity {
         return c; // returns null if camera is unavailable
     }
 
-
     private Camera.PictureCallback mPicture = new Camera.PictureCallback() {
+        private ProgressDialog mDialog;
 
         @Override
-        public void onPictureTaken(byte[] data, Camera camera) {
-
+        public void onPictureTaken(byte[] data, final Camera camera) {
+            mDialog = ProgressDialog.show(MainActivity.this, "In progress", "Loading...", true);
             BitmapFactory.Options bounds = new BitmapFactory.Options();
             bounds.inJustDecodeBounds = true;
             BitmapFactory.decodeByteArray(data, 0, data.length, bounds);
@@ -150,9 +170,9 @@ public class MainActivity extends AppCompatActivity {
             Matrix matrix = new Matrix();
 
             matrix.postRotate(rotation, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
-            Bitmap rotatedBitmap = Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
+            final Bitmap rotatedBitmap = Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
 
-            File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+            final File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
 
             if (pictureFile == null) {
                 Log.d(TAG, "Error creating media file, check storage permissions: ");
@@ -160,49 +180,52 @@ public class MainActivity extends AppCompatActivity {
             }
 
             try {
-
                 FileOutputStream fos = new FileOutputStream(pictureFile);
                 rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
                 fos.write(data);
                 fos.close();
-                String encoded = Base64.encodeToString(data, Base64.DEFAULT);
-
-                JsonObject httpQuery = new JsonParser().parse(
-                        "{" +
-                                "\"requests\": [" +
-                                "{" +
-                                "\"image\":{" +
-                                "\"content\":" + "\"" + encoded + "\"" +
-                                "}, " +
-                                "\"features\":[" +
-                                "{" +
-                                "\"type\":\"" + Constants.OCR_TYPE + "\"" +
-                                "}" +
-                                "]" +
-                                "}" +
-                                "]" +
-                                "}").getAsJsonObject();
-
-                Callback<JsonObject> callbackTextDetection = new Callback<JsonObject>() {
-                    @Override
-                    public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                        System.out.println(response.body());
-                    }
-
-                    @Override
-                    public void onFailure(Call<JsonObject> call, Throwable t) {
-                        System.out.println(t.getMessage());
-                    }
-                };
-
-                Call<JsonObject> callTextDetection = apiInterface.detectText(httpQuery.toString());
-                callTextDetection.enqueue(callbackTextDetection);
-
             } catch (FileNotFoundException e) {
                 Log.d(TAG, "File not found: " + e.getMessage());
             } catch (IOException e) {
                 Log.d(TAG, "Error accessing file: " + e.getMessage());
             }
+
+            String encoded = Base64.encodeToString(data, Base64.DEFAULT);
+
+            JsonObject httpQuery = new JsonParser().parse(
+                    "{" +
+                            "\"requests\": [" +
+                            "{" +
+                            "\"image\":{" +
+                            "\"content\":" + "\"" + encoded + "\"" +
+                            "}, " +
+                            "\"features\":[" +
+                            "{" +
+                            "\"type\":\"" + Constants.OCR_TYPE + "\"" +
+                            "}" +
+                            "]" +
+                            "}" +
+                            "]" +
+                            "}").getAsJsonObject();
+
+            Callback<JsonObject> callbackTextDetection = new Callback<JsonObject>() {
+                @Override
+                public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                    Intent myIntent = new Intent(MainActivity.this, TextSelection.class);
+                    myIntent.putExtra(Constants.PREVIEW_IMAGE_KEY, pictureFile); //Optional parameters
+                    MainActivity.this.startActivity(myIntent);
+                    mDialog.dismiss();
+                    System.out.println(response.body());
+                }
+
+                @Override
+                public void onFailure(Call<JsonObject> call, Throwable t) {
+                    System.out.println(t.getMessage());
+                }
+            };
+
+            Call<JsonObject> callTextDetection = apiInterface.detectText(httpQuery.toString());
+            callTextDetection.enqueue(callbackTextDetection);
         }
     };
 
@@ -260,12 +283,10 @@ public class MainActivity extends AppCompatActivity {
                 double[] apiValues = new double[32];
                 String a = "";
                 String[] splitApiValues = sApiValues.split("full_nutrients", -1);
-                String[] subHaupt =  splitApiValues[0].split(",",-1);
+                String[] subHaupt = splitApiValues[0].split(",", -1);
                 String[] inhalt = {"nf_protein", "nf_total_fat", "nf_total_carbohydrate", "nf_sugars", "nf_dietary_fiber", "nf_saturated_fat"};
-                for(int i = 0; i<subHaupt.length;i++)
-                {
-                    for (int j = 0; j < inhalt.length; j++)
-                    {
+                for (int i = 0; i < subHaupt.length; i++) {
+                    for (int j = 0; j < inhalt.length; j++) {
                         if (subHaupt[i].contains(inhalt[j])) {
                             if (subHaupt[i].substring(inhalt[j].length() + 3).equals("null"))
                                 apiValues[j] = -1;
@@ -274,61 +295,45 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 }
-                String[] subExtra =  splitApiValues[1].split("\\}",-1);
-                String [] inhaltExtra = {"attr_id\":645,","attr_id\":646,"}; //645 monosaturated, 646 polysaturated
-                for(int i = 0; i<subExtra.length;i++)
-                {
-                    for (int j = 0; j < inhaltExtra.length; j++)
-                    {
+                String[] subExtra = splitApiValues[1].split("\\}", -1);
+                String[] inhaltExtra = {"attr_id\":645,", "attr_id\":646,"}; //645 monosaturated, 646 polysaturated
+                for (int i = 0; i < subExtra.length; i++) {
+                    for (int j = 0; j < inhaltExtra.length; j++) {
                         if (subExtra[i].contains(inhaltExtra[j])) {
                             if (subExtra[i].substring(inhaltExtra[j].length() + 11).equals("null"))
-                                apiValues[j+6] = -1;
+                                apiValues[j + 6] = -1;
                             else
-                                apiValues[j+6] = Double.parseDouble(subExtra[i].substring(inhaltExtra[j].length() + 11));
+                                apiValues[j + 6] = Double.parseDouble(subExtra[i].substring(inhaltExtra[j].length() + 11));
                         }
                     }
                 }
 
-
-
-
                 //Test Code
-                String s ="";
-                System.out.println("Food result for: " +foodName);
+                String s = "";
+                System.out.println("Food result for: " + foodName);
                 System.out.println("The dish contains the following nutrients");
-                for(double i:apiValues)
-                    s += Double.toString(i) +"\n";
-                for(int i = 8;i<apiValues.length;i++)
+                for (double i : apiValues)
+                    s += Double.toString(i) + "\n";
+                for (int i = 8; i < apiValues.length; i++)
                     apiValues[i] = 0;
                 System.out.println(s);
                 Evaluator e = new Evaluator();
-                int[] preferences ={1,1,1,1,1};
+                int[] preferences = {1, 1, 1, 1, 1};
                 System.out.println();
                 System.out.println("The dish receives the following scores");
-                int scores[] = e.evaluateDish(1,preferences,apiValues);
-                for(int i=0;i<scores.length;i++)
-                System.out.println(scores[i]);
+                int scores[] = e.evaluateDish(1, preferences, apiValues);
+                for (int i = 0; i < scores.length; i++)
+                    System.out.println(scores[i]);
                 System.out.println();
                 System.out.println("The dish receives the following colour");
-                if(scores[0] > 100)
+                if (scores[0] > 100)
                     System.out.println("green");
                 else {
                     if (scores[0] > 90)
                         System.out.println("yellow");
                     else
                         System.out.println("red");
-                    }
-
-
-
-
-
-
-
-
-
-
-
+                }
             }
 
             @Override
@@ -337,8 +342,11 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+
         Call<JsonObject> callGetNutrition = apiInterface.getNutrition(httpQuery.toString());
         callGetNutrition.enqueue(callbackGetNutrition);
 
     }
+
+
 }
