@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private Camera.Size getPictureSize(List<Camera.Size> sizes){
+    private Camera.Size getPictureSize(List<Camera.Size> sizes) {
 
         for (Camera.Size size : sizes) {
             if ((size.width * size.height) / 1024000 <= 2.5) {
@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onPictureTaken(byte[] data, final Camera camera) {
-            mDialog = ProgressDialog.show(MainActivity.this,"In progress", "Loading...", true);
+            mDialog = ProgressDialog.show(MainActivity.this, "In progress", "Loading...", true);
             BitmapFactory.Options bounds = new BitmapFactory.Options();
             bounds.inJustDecodeBounds = true;
             BitmapFactory.decodeByteArray(data, 0, data.length, bounds);
@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
                 rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
                 fos.write(data);
                 fos.close();
-            }catch (FileNotFoundException e) {
+            } catch (FileNotFoundException e) {
                 Log.d(TAG, "File not found: " + e.getMessage());
             } catch (IOException e) {
                 Log.d(TAG, "Error accessing file: " + e.getMessage());
@@ -283,12 +283,10 @@ public class MainActivity extends AppCompatActivity {
                 double[] apiValues = new double[32];
                 String a = "";
                 String[] splitApiValues = sApiValues.split("full_nutrients", -1);
-                String[] subHaupt =  splitApiValues[0].split(",",-1);
+                String[] subHaupt = splitApiValues[0].split(",", -1);
                 String[] inhalt = {"nf_protein", "nf_total_fat", "nf_total_carbohydrate", "nf_sugars", "nf_dietary_fiber", "nf_saturated_fat"};
-                for(int i = 0; i<subHaupt.length;i++)
-                {
-                    for (int j = 0; j < inhalt.length; j++)
-                    {
+                for (int i = 0; i < subHaupt.length; i++) {
+                    for (int j = 0; j < inhalt.length; j++) {
                         if (subHaupt[i].contains(inhalt[j])) {
                             if (subHaupt[i].substring(inhalt[j].length() + 3).equals("null"))
                                 apiValues[j] = -1;
@@ -297,61 +295,45 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 }
-                String[] subExtra =  splitApiValues[1].split("\\}",-1);
-                String [] inhaltExtra = {"attr_id\":645,","attr_id\":646,"}; //645 monosaturated, 646 polysaturated
-                for(int i = 0; i<subExtra.length;i++)
-                {
-                    for (int j = 0; j < inhaltExtra.length; j++)
-                    {
+                String[] subExtra = splitApiValues[1].split("\\}", -1);
+                String[] inhaltExtra = {"attr_id\":645,", "attr_id\":646,"}; //645 monosaturated, 646 polysaturated
+                for (int i = 0; i < subExtra.length; i++) {
+                    for (int j = 0; j < inhaltExtra.length; j++) {
                         if (subExtra[i].contains(inhaltExtra[j])) {
                             if (subExtra[i].substring(inhaltExtra[j].length() + 11).equals("null"))
-                                apiValues[j+6] = -1;
+                                apiValues[j + 6] = -1;
                             else
-                                apiValues[j+6] = Double.parseDouble(subExtra[i].substring(inhaltExtra[j].length() + 11));
+                                apiValues[j + 6] = Double.parseDouble(subExtra[i].substring(inhaltExtra[j].length() + 11));
                         }
                     }
                 }
 
-
-
-
                 //Test Code
-                String s ="";
-                System.out.println("Food result for: " +foodName);
+                String s = "";
+                System.out.println("Food result for: " + foodName);
                 System.out.println("The dish contains the following nutrients");
-                for(double i:apiValues)
-                    s += Double.toString(i) +"\n";
-                for(int i = 8;i<apiValues.length;i++)
+                for (double i : apiValues)
+                    s += Double.toString(i) + "\n";
+                for (int i = 8; i < apiValues.length; i++)
                     apiValues[i] = 0;
                 System.out.println(s);
                 Evaluator e = new Evaluator();
-                int[] preferences ={1,1,1,1,1};
+                int[] preferences = {1, 1, 1, 1, 1};
                 System.out.println();
                 System.out.println("The dish receives the following scores");
-                int scores[] = e.evaluateDish(1,preferences,apiValues);
-                for(int i=0;i<scores.length;i++)
-                System.out.println(scores[i]);
+                int scores[] = e.evaluateDish(1, preferences, apiValues);
+                for (int i = 0; i < scores.length; i++)
+                    System.out.println(scores[i]);
                 System.out.println();
                 System.out.println("The dish receives the following colour");
-                if(scores[0] > 100)
+                if (scores[0] > 100)
                     System.out.println("green");
                 else {
                     if (scores[0] > 90)
                         System.out.println("yellow");
                     else
                         System.out.println("red");
-                    }
-
-
-
-
-
-
-
-
-
-
-
+                }
             }
 
             @Override
