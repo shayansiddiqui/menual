@@ -9,7 +9,7 @@ import retrofit2.http.POST;
 
 public interface ApiInterface {
 
-    @Headers("Content-Type: application/json")
+//    @Headers("Content-Type: application/json")
     @POST("/detectText")
     Call<JsonObject> detectText(@Body String body);
 
