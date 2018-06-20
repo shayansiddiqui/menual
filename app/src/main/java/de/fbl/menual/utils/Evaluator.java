@@ -16,6 +16,25 @@ public class Evaluator {
     private int[][] mahlzeit = {{25,20,25,30}, {30,35,30,30}, {25,30,25,25}, {10,10,10,10}}; //erster Identifier: Frühstück, Mitagessen, Abendessen, Snack. Zweiter Identifier: Energie,Proteine,Fett,KH
 //laut der DGE sollte eine Mahlzeit 10% Zucker am Kalorienanteil nicht überschreiten
 
+    private int[] details = new int[15]; //[0]: too many fats [1]: too many carbohydrates [2-14]: good amount of vitamin
+
+    public int[] getDetails()
+    {
+        return details;
+    }
+    public int[][] getMahlzeit()
+    {
+        return mahlzeit;
+    }
+    public int indexOf(int[] a, int value)
+    {
+        for(int i = 0; i<a.length;i++)
+        {
+            if(a[i] == value)
+                return i;
+        }
+            return -1;
+    }
     /**
      * Evaluates a Health Score for a Dish. Standard score is 100. >100 = green, >90 = yellow, <90 = red, -1 = not enough information available
      * @param userMahlzeit [0]: breakfast [1]: lunch, [2]: dinner [3]: Snack
@@ -28,6 +47,7 @@ public class Evaluator {
      */
     public int[] evaluateDish(int userMahlzeit, int[] preferences, double[] aPiValues)
     {
+
         double score = 0;
         int counter[] = new int[4];
 
@@ -142,12 +162,20 @@ public class Evaluator {
         for(int i=0; i< APIgMakros.length; i++)
             actualMakroverteilung[i] =  APIgMakros[i]/sum; // tatsächliches prozentuales Makroverhältnis
 
+        double punishFats = (actualMakroverteilung[1] - optimalpMakroverteilung[1]) * 100 * preferences[0];
+        double punishCarbs = (actualMakroverteilung[2] - optimalpMakroverteilung[2]) * 100 * preferences[0];
+
         if(actualMakroverteilung[0] > optimalpMakroverteilung[0])
             score = score + 0.5*(actualMakroverteilung[0] - optimalpMakroverteilung[0])*100*preferences[0]; //Pluspunkte für proteinreiche Mahlzeit
         if(actualMakroverteilung[1] > optimalpMakroverteilung[1])
-            score = score - (actualMakroverteilung[1] - optimalpMakroverteilung[1])*100*preferences[0]; //Strafpunkte für zu viele Fette
+            score = score - punishFats; //Strafpunkte für zu viele Fette
         if(actualMakroverteilung[2] > optimalpMakroverteilung[2])
-            score = score - (actualMakroverteilung[2] - optimalpMakroverteilung[2])*100*preferences[0]; //Strafpunkte für zu viele Kohlenhydrate
+                score = score - punishCarbs; //Strafpunkte für zu viele Kohlenhydrate
+
+        if(punishFats > 20)
+            details[0] = 1;
+        if(punishCarbs > 20)
+            details[1] = 1;
 
         return (int) score;
     }
@@ -210,8 +238,11 @@ public class Evaluator {
         int multiplier = mahlzeit[userMahlzeit][0];
         for(int i = 0; i < mgVitamine.length;i++)
         {
-            if(aPIValues[i] > mgVitamine[i]*multiplier/100)
-                score+= 5;
+            details[2+i] = 0;
+            if(aPIValues[i] > mgVitamine[i]*multiplier/100) {
+                score += 5;
+                details[2+i] = 1;
+            }
         }
         return (int) score;
     }

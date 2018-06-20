@@ -1,12 +1,10 @@
 package de.fbl.menual;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.hardware.Camera;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
@@ -26,18 +24,17 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 
 import android.util.Base64;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import java.util.Arrays;
 
 
 import org.json.JSONObject;
 
 import java.util.Date;
-import java.util.List;
 
 import de.fbl.menual.api.RetrofitInstance;
 import de.fbl.menual.api.ApiInterface;
@@ -75,9 +72,9 @@ public class MainActivity extends AppCompatActivity {
 //                TODO: Just a sample call. Need to move from here
 
                 getNutrition("Big mac");
-                getNutrition("Salmon salad");
-                getNutrition("Pizza");
-                getNutrition("Spaghetti bolognese");
+               getNutrition("Salmon salad");
+               getNutrition("Pizza");
+               getNutrition("Spaghetti bolognese");
 
 
             }
@@ -91,10 +88,6 @@ public class MainActivity extends AppCompatActivity {
         //*EDIT*//params.setFocusMode("continuous-picture");
         //It is better to use defined constraints as opposed to String, thanks to AbdelHady
         params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-
-        Camera.Size desiredSize = getPictureSize(params.getSupportedPictureSizes());
-        System.out.println(desiredSize.width);
-        params.setPictureSize(desiredSize.width, desiredSize.height);
         mCamera.setParameters(params);
 
 
@@ -111,17 +104,6 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
-    }
-
-    private Camera.Size getPictureSize(List<Camera.Size> sizes) {
-
-        for (Camera.Size size : sizes) {
-            if ((size.width * size.height) / 1024000 <= 2.5) {
-                return size;
-            }
-        }
-
-        return null;
     }
 
     @Override
@@ -156,12 +138,12 @@ public class MainActivity extends AppCompatActivity {
         return c; // returns null if camera is unavailable
     }
 
+
     private Camera.PictureCallback mPicture = new Camera.PictureCallback() {
-        private ProgressDialog mDialog;
 
         @Override
-        public void onPictureTaken(byte[] data, final Camera camera) {
-            mDialog = ProgressDialog.show(MainActivity.this, "In progress", "Loading...", true);
+        public void onPictureTaken(byte[] data, Camera camera) {
+
             BitmapFactory.Options bounds = new BitmapFactory.Options();
             bounds.inJustDecodeBounds = true;
             BitmapFactory.decodeByteArray(data, 0, data.length, bounds);
@@ -170,9 +152,9 @@ public class MainActivity extends AppCompatActivity {
             Matrix matrix = new Matrix();
 
             matrix.postRotate(rotation, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
-            final Bitmap rotatedBitmap = Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
+            Bitmap rotatedBitmap = Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
 
-            final File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+            File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
 
             if (pictureFile == null) {
                 Log.d(TAG, "Error creating media file, check storage permissions: ");
@@ -180,52 +162,49 @@ public class MainActivity extends AppCompatActivity {
             }
 
             try {
+
                 FileOutputStream fos = new FileOutputStream(pictureFile);
                 rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
                 fos.write(data);
                 fos.close();
+                String encoded = Base64.encodeToString(data, Base64.DEFAULT);
+
+                JsonObject httpQuery = new JsonParser().parse(
+                        "{" +
+                                "\"requests\": [" +
+                                "{" +
+                                "\"image\":{" +
+                                "\"content\":" + "\"" + encoded + "\"" +
+                                "}, " +
+                                "\"features\":[" +
+                                "{" +
+                                "\"type\":\"" + Constants.OCR_TYPE + "\"" +
+                                "}" +
+                                "]" +
+                                "}" +
+                                "]" +
+                                "}").getAsJsonObject();
+
+                Callback<JsonObject> callbackTextDetection = new Callback<JsonObject>() {
+                    @Override
+                    public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                        System.out.println(response.body());
+                    }
+
+                    @Override
+                    public void onFailure(Call<JsonObject> call, Throwable t) {
+                        System.out.println(t.getMessage());
+                    }
+                };
+
+                Call<JsonObject> callTextDetection = apiInterface.detectText(httpQuery.toString());
+                callTextDetection.enqueue(callbackTextDetection);
+
             } catch (FileNotFoundException e) {
                 Log.d(TAG, "File not found: " + e.getMessage());
             } catch (IOException e) {
                 Log.d(TAG, "Error accessing file: " + e.getMessage());
             }
-
-            String encoded = Base64.encodeToString(data, Base64.DEFAULT);
-
-            JsonObject httpQuery = new JsonParser().parse(
-                    "{" +
-                            "\"requests\": [" +
-                            "{" +
-                            "\"image\":{" +
-                            "\"content\":" + "\"" + encoded + "\"" +
-                            "}, " +
-                            "\"features\":[" +
-                            "{" +
-                            "\"type\":\"" + Constants.OCR_TYPE + "\"" +
-                            "}" +
-                            "]" +
-                            "}" +
-                            "]" +
-                            "}").getAsJsonObject();
-
-            Callback<JsonObject> callbackTextDetection = new Callback<JsonObject>() {
-                @Override
-                public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                    Intent myIntent = new Intent(MainActivity.this, TextSelection.class);
-                    myIntent.putExtra(Constants.PREVIEW_IMAGE_KEY, pictureFile); //Optional parameters
-                    MainActivity.this.startActivity(myIntent);
-                    mDialog.dismiss();
-                    System.out.println(response.body());
-                }
-
-                @Override
-                public void onFailure(Call<JsonObject> call, Throwable t) {
-                    System.out.println(t.getMessage());
-                }
-            };
-
-            Call<JsonObject> callTextDetection = apiInterface.detectText(httpQuery.toString());
-            callTextDetection.enqueue(callbackTextDetection);
         }
     };
 
@@ -265,6 +244,121 @@ public class MainActivity extends AppCompatActivity {
         return mediaFile;
     }
 
+    public void getComment(int[] scores, Evaluator e)
+    {
+        int[] sortedScores = scores.clone();
+        Arrays.sort(sortedScores);
+
+        String[] ingredients = {"", "proteins", "sugar", "fiber", "healthy fats", "vitamins"};
+        String[] ingredientsUnhealthy = {"", "proteins", "sugar", "fiber", "saturated fats", "vitamins"};
+
+
+        String comment1 = "";
+        String comment2 ="";
+        if (scores[0] > 100) {
+            System.out.println("green");
+            int max = sortedScores[sortedScores.length - 1];
+            int max2 = sortedScores[sortedScores.length - 2];
+
+            if (max > 110) {
+                int result1st = e.indexOf(scores,max);
+                String kriterium1 = ingredients[result1st];
+                if (result1st != 0)
+                    comment1 =("Awesome, this meal contains a lot of " + kriterium1 + "!");
+            }
+            if (max2 > 100) {
+                int result2nd = e.indexOf(scores,max2);
+                if(result2nd == 0)
+                {
+                    max2 = sortedScores[sortedScores.length - 3];
+                    if(max2 > 100)
+                        result2nd = e.indexOf(scores,max2);
+                }
+                String kriterium2 = ingredients[result2nd];
+                if (result2nd != 0)
+                    comment2 = ("Great, this meal contains a lot of " + kriterium2 + "!");
+            }
+
+        } else {
+            if (scores[0] > 90) {
+                System.out.println("yellow");
+            } else {
+                System.out.println("red");
+            }
+            int min = sortedScores[0];
+            int min2 = sortedScores[1];
+            if (min < 87) {
+                //int result1st = Arrays.asList(scores).indexOf(min);
+                int result1st = e.indexOf(scores, min);
+                String kriterium1 = ingredientsUnhealthy[result1st];
+                if (result1st != 0) {
+                    if (result1st == 2)
+                        comment1 = ("Boo, this meal contains too much " + kriterium1 + "!");
+                    if (result1st == 4)
+                        comment1 = ("Oh no, this meal contains too many " + kriterium1 + "!");
+                    if (result1st == 3 || result1st == 5)
+                        comment1 = ("This meal contains not enough " + kriterium1 + "!");
+                    if (result1st == 1) {
+                        if (e.getDetails()[0] == 1) {
+                            comment1 = ("This meal has too many carbohydrates!");
+                        }
+                        if (e.getDetails()[1] == 1) {
+                            comment1 = ("This meal has too many fats!");
+                        }
+                        int[][] mahlzeit = e.getMahlzeit();
+                        int mealtime = 1; //Has to be replaced with actual mealtime
+                        String[] mealtype = {"breakfast", "lunch", "dinner", "snack"};
+                        comment1 = ("The optimal " + mealtype[mealtime] + " should only consist of a maximum proportion of " + mahlzeit[mealtime][3] + "% fat and at most " + mahlzeit[mealtime][4] + "% carbohydrates!");
+                    }
+                }
+            }
+
+
+            if (min2 < 87) {
+                int result2nd = e.indexOf(scores, min2);
+
+                if(result2nd == 0) {
+                    min2 = sortedScores[2] ;
+                    if(min2<87)
+                        result2nd = e.indexOf(scores,min2);
+                }
+                String kriterium2 = ingredientsUnhealthy[result2nd];
+
+                if (result2nd != 0) {
+
+                    if (result2nd == 2)
+                        comment2 = ("Bad news, this meal contains too much " + kriterium2 + "!");
+                    if (result2nd == 4)
+                        comment2 =("Bad news, this meal contains too many " + kriterium2 + "!");
+                    if (result2nd == 3 || result2nd == 5)
+                        comment2 =("Unfortunately, this meal contains not enough " + kriterium2 + "!");
+                }
+
+                if (result2nd == 1) {
+                    if (e.getDetails()[0] == 1) {
+                        comment2 =("This meal has too many carbohydrates!");
+                    }
+                    if (e.getDetails()[1] == 1) {
+                        comment2 =("This meal has too many fats!");
+                    }
+                    int[][] mahlzeit = e.getMahlzeit();
+                    int mealtime = 1; //Has to be replaced with actual mealtime
+                    String[] mealtype = {"breakfast", "lunch", "dinner", "snack"};
+                    comment2 =("The optimal " + mealtype[mealtime] + " should only consist of a maximum proportion of " + mahlzeit[mealtime][2] + "% fat and at most " + mahlzeit[mealtime][3] + "% carbohydrates!");
+                }
+
+
+            }
+        }
+        if(!comment1.isEmpty())
+            System.out.println(comment1); //you need to fetch only these 2 comments and display them on the screen
+        if(!comment2.isEmpty())
+            System.out.println(comment2);
+
+
+
+    }
+
     private void getNutrition(final String foodName) {
 
         JsonObject httpQuery = new JsonParser().parse(
@@ -280,6 +374,9 @@ public class MainActivity extends AppCompatActivity {
                 //JsonObject lresponse = response.body();
                 //System.out.println(response.body().toString());
                 String sApiValues = response.body().toString();
+
+
+                //System.out.println(b);
                 double[] apiValues = new double[32];
                 String a = "";
                 String[] splitApiValues = sApiValues.split("full_nutrients", -1);
@@ -308,6 +405,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
 
+
                 //Test Code
                 String s = "";
                 System.out.println("Food result for: " + foodName);
@@ -326,14 +424,16 @@ public class MainActivity extends AppCompatActivity {
                     System.out.println(scores[i]);
                 System.out.println();
                 System.out.println("The dish receives the following colour");
-                if (scores[0] > 100)
+
+                getComment(scores,e); //This Mmethod got added, you just need the 2 Systemoutprinlns from the end of the method
+                if(scores[0] > 100)
                     System.out.println("green");
-                else {
-                    if (scores[0] > 90)
-                        System.out.println("yellow");
-                    else
-                        System.out.println("red");
+                if (scores[0] > 90) {
+                    System.out.println("yellow");
+                } else {
+                    System.out.println("red");
                 }
+
             }
 
             @Override
@@ -342,11 +442,8 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-
         Call<JsonObject> callGetNutrition = apiInterface.getNutrition(httpQuery.toString());
         callGetNutrition.enqueue(callbackGetNutrition);
 
     }
-
-
 }
