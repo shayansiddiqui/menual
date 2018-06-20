@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import de.fbl.menual.ScanHistory;
 import de.fbl.menual.api.ApiInterface;
@@ -115,6 +116,121 @@ public class NutritionUtils {
 
         Call<JsonObject> callGetNutrition = apiInterface.getNutrition(httpQuery.toString());
         callGetNutrition.enqueue(callbackGetNutrition);
+
+    }
+
+    public void getComment(int[] scores, Evaluator e)
+    {
+        int[] sortedScores = scores.clone();
+        Arrays.sort(sortedScores);
+
+        String[] ingredients = {"", "proteins", "sugar", "fiber", "healthy fats", "vitamins"};
+        String[] ingredientsUnhealthy = {"", "proteins", "sugar", "fiber", "saturated fats", "vitamins"};
+
+
+        String comment1 = "";
+        String comment2 ="";
+        if (scores[0] > 100) {
+            System.out.println("green");
+            int max = sortedScores[sortedScores.length - 1];
+            int max2 = sortedScores[sortedScores.length - 2];
+
+            if (max > 110) {
+                int result1st = e.indexOf(scores,max);
+                String kriterium1 = ingredients[result1st];
+                if (result1st != 0)
+                    comment1 =("Awesome, this meal contains a lot of " + kriterium1 + "!");
+            }
+            if (max2 > 100) {
+                int result2nd = e.indexOf(scores,max2);
+                if(result2nd == 0)
+                {
+                    max2 = sortedScores[sortedScores.length - 3];
+                    if(max2 > 100)
+                        result2nd = e.indexOf(scores,max2);
+                }
+                String kriterium2 = ingredients[result2nd];
+                if (result2nd != 0)
+                    comment2 = ("Great, this meal contains a lot of " + kriterium2 + "!");
+            }
+
+        } else {
+            if (scores[0] > 90) {
+                System.out.println("yellow");
+            } else {
+                System.out.println("red");
+            }
+            int min = sortedScores[0];
+            int min2 = sortedScores[1];
+            if (min < 87) {
+                //int result1st = Arrays.asList(scores).indexOf(min);
+                int result1st = e.indexOf(scores, min);
+                String kriterium1 = ingredientsUnhealthy[result1st];
+                if (result1st != 0) {
+                    if (result1st == 2)
+                        comment1 = ("Boo, this meal contains too much " + kriterium1 + "!");
+                    if (result1st == 4)
+                        comment1 = ("Oh no, this meal contains too many " + kriterium1 + "!");
+                    if (result1st == 3 || result1st == 5)
+                        comment1 = ("This meal contains not enough " + kriterium1 + "!");
+                    if (result1st == 1) {
+                        if (e.getDetails()[0] == 1) {
+                            comment1 = ("This meal has too many carbohydrates!");
+                        }
+                        if (e.getDetails()[1] == 1) {
+                            comment1 = ("This meal has too many fats!");
+                        }
+                        int[][] mahlzeit = e.getMahlzeit();
+                        int mealtime = 1; //Has to be replaced with actual mealtime
+                        String[] mealtype = {"breakfast", "lunch", "dinner", "snack"};
+                        comment1 = ("The optimal " + mealtype[mealtime] + " should only consist of a maximum proportion of " + mahlzeit[mealtime][3] + "% fat and at most " + mahlzeit[mealtime][4] + "% carbohydrates!");
+                    }
+                }
+            }
+
+
+            if (min2 < 87) {
+                int result2nd = e.indexOf(scores, min2);
+
+                if(result2nd == 0) {
+                    min2 = sortedScores[2] ;
+                    if(min2<87)
+                        result2nd = e.indexOf(scores,min2);
+                }
+                String kriterium2 = ingredientsUnhealthy[result2nd];
+
+                if (result2nd != 0) {
+
+                    if (result2nd == 2)
+                        comment2 = ("Bad news, this meal contains too much " + kriterium2 + "!");
+                    if (result2nd == 4)
+                        comment2 =("Bad news, this meal contains too many " + kriterium2 + "!");
+                    if (result2nd == 3 || result2nd == 5)
+                        comment2 =("Unfortunately, this meal contains not enough " + kriterium2 + "!");
+                }
+
+                if (result2nd == 1) {
+                    if (e.getDetails()[0] == 1) {
+                        comment2 =("This meal has too many carbohydrates!");
+                    }
+                    if (e.getDetails()[1] == 1) {
+                        comment2 =("This meal has too many fats!");
+                    }
+                    int[][] mahlzeit = e.getMahlzeit();
+                    int mealtime = 1; //Has to be replaced with actual mealtime
+                    String[] mealtype = {"breakfast", "lunch", "dinner", "snack"};
+                    comment2 =("The optimal " + mealtype[mealtime] + " should only consist of a maximum proportion of " + mahlzeit[mealtime][2] + "% fat and at most " + mahlzeit[mealtime][3] + "% carbohydrates!");
+                }
+
+
+            }
+        }
+        if(!comment1.isEmpty())
+            System.out.println(comment1); //you need to fetch only these 2 comments and display them on the screen
+        if(!comment2.isEmpty())
+            System.out.println(comment2);
+
+
 
     }
 
