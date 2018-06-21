@@ -11,32 +11,31 @@ import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-
-import android.util.Base64;
-
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import de.fbl.menual.api.RetrofitInstance;
 import de.fbl.menual.api.ApiInterface;
+import de.fbl.menual.api.RetrofitInstance;
 import de.fbl.menual.utils.CameraPreview;
 import de.fbl.menual.utils.Constants;
-import de.fbl.menual.utils.NutritionUtils;
+import de.fbl.menual.utils.Evaluator;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -51,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
     private CameraPreview mPreview;
     private int rotation;
     private ApiInterface apiInterface;
-    private NutritionUtils utils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,13 +63,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mCamera.takePicture(null, null, mPicture);
-
-//                TODO: Just a sample call. Need to move from here
-
-               // getNutrition("Big mac");
-
-
-
             }
         });
 
@@ -96,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
         preview.addView(mPreview);
         rotation = CameraPreview.correctCameraDisplayOrientation(MainActivity.this, mCamera);
         apiInterface = RetrofitInstance.getRetrofitInstance().create(ApiInterface.class);
-
     }
 
     @Override
@@ -130,11 +120,6 @@ public class MainActivity extends AppCompatActivity {
 //            myIntent.putExtra("key", value); //Optional parameters
             MainActivity.this.startActivity(myIntent);
             return true;
-        } else if (id == R.id.action_scan_history){
-            Intent myIntent = new Intent(MainActivity.this, ScanHistory.class);
-//            myIntent.putExtra("key", value); //Optional parameters
-            MainActivity.this.startActivity(myIntent);
-            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -159,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onPictureTaken(byte[] data, final Camera camera) {
-            mDialog = ProgressDialog.show(MainActivity.this, "In progress", "Loading...", true);
+            mDialog = ProgressDialog.show(MainActivity.this, "In progress", "Detecting text...", true);
             BitmapFactory.Options bounds = new BitmapFactory.Options();
             bounds.inJustDecodeBounds = true;
             BitmapFactory.decodeByteArray(data, 0, data.length, bounds);
@@ -178,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             try {
+
                 FileOutputStream fos = new FileOutputStream(pictureFile);
                 rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
                 fos.write(data);
@@ -188,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "Error accessing file: " + e.getMessage());
             }
 
-            String encoded = Base64.encodeToString(data, Base64.DEFAULT);
+            String encoded = convertToBase64(rotatedBitmap);
 
             JsonObject httpQuery = new JsonParser().parse(
                     "{" +
@@ -211,6 +197,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                     Intent myIntent = new Intent(MainActivity.this, TextSelection.class);
                     myIntent.putExtra(Constants.PREVIEW_IMAGE_KEY, pictureFile); //Optional parameters
+                    myIntent.putExtra(Constants.DETECTION_RESPONSE_KEY, response.body().toString()); //Optional parameters
                     MainActivity.this.startActivity(myIntent);
                     mDialog.dismiss();
                     System.out.println(response.body());
@@ -226,6 +213,14 @@ public class MainActivity extends AppCompatActivity {
             callTextDetection.enqueue(callbackTextDetection);
         }
     };
+
+
+    private static String convertToBase64(Bitmap bitmap) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+
+        return Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT);
+    }
 
     /**
      * Create a File for saving an image or video
@@ -262,5 +257,6 @@ public class MainActivity extends AppCompatActivity {
 
         return mediaFile;
     }
+
 
 }
