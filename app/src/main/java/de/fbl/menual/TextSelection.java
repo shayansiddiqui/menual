@@ -69,7 +69,7 @@ public class TextSelection extends AppCompatActivity {
                         utils.initiateApi("Big mac");
                         int listSize = utils.getList().size();
                         if(listSize == 0) {
-                            Thread.sleep(1000);
+                            Thread.sleep(2000);
                         }
 
                         myIntent.putExtra("populated-list", utils.getList());

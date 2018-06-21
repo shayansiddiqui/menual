@@ -7,6 +7,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 import de.fbl.menual.adapters.PreferenceAdapter;
+import de.fbl.menual.adapters.SuggestionsAdapter;
 
 public class ScanHistory extends AppCompatActivity {
 
@@ -21,7 +22,7 @@ public class ScanHistory extends AppCompatActivity {
         list = getIntent().getStringArrayListExtra("populated-list");
 
         //instantiate custom adapter
-        PreferenceAdapter adapter = new PreferenceAdapter(list, this);
+        SuggestionsAdapter adapter = new SuggestionsAdapter(list, this);
 
         //handle listview and assign adapter
         ListView lView = (ListView) findViewById(R.id.preference_list);
