@@ -1,17 +1,18 @@
 package de.fbl.menual;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.hardware.Camera;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,27 +22,21 @@ import android.widget.FrameLayout;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import de.fbl.menual.api.ApiInterface;
 import de.fbl.menual.api.RetrofitInstance;
+import de.fbl.menual.tasks.TextDetectionTask;
 import de.fbl.menual.utils.CameraPreview;
+import de.fbl.menual.utils.Config;
 import de.fbl.menual.utils.Constants;
-import de.fbl.menual.utils.Evaluator;
+import de.fbl.menual.utils.FileUtils;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
-import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
 import static android.support.constraint.Constraints.TAG;
 
 public class MainActivity extends AppCompatActivity {
@@ -55,10 +50,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -71,8 +66,6 @@ public class MainActivity extends AppCompatActivity {
         mCamera = getCameraInstance();
 
         Camera.Parameters params = mCamera.getParameters();
-        //*EDIT*//params.setFocusMode("continuous-picture");
-        //It is better to use defined constraints as opposed to String, thanks to AbdelHady
         params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
 
         Camera.Size desiredSize = getPictureSize(params.getSupportedPictureSizes());
@@ -80,10 +73,8 @@ public class MainActivity extends AppCompatActivity {
         params.setPictureSize(desiredSize.width, desiredSize.height);
         mCamera.setParameters(params);
 
-
-        // Create our Preview view and set it as the content of our activity.
         mPreview = new CameraPreview(this, mCamera);
-        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+        FrameLayout preview = findViewById(R.id.camera_preview);
         preview.addView(mPreview);
         rotation = CameraPreview.correctCameraDisplayOrientation(MainActivity.this, mCamera);
         apiInterface = RetrofitInstance.getRetrofitInstance().create(ApiInterface.class);
@@ -141,41 +132,48 @@ public class MainActivity extends AppCompatActivity {
 
     private Camera.PictureCallback mPicture = new Camera.PictureCallback() {
         private ProgressDialog mDialog;
+        Context context = MainActivity.this;
+        boolean newCacheFileNeeded = false;
+        Bitmap previewImage = null;
+        byte[] imgData = null;
 
         @Override
         public void onPictureTaken(byte[] data, final Camera camera) {
             mDialog = ProgressDialog.show(MainActivity.this, "In progress", "Detecting text...", true);
-            BitmapFactory.Options bounds = new BitmapFactory.Options();
-            bounds.inJustDecodeBounds = true;
-            BitmapFactory.decodeByteArray(data, 0, data.length, bounds);
 
-            Bitmap bm = BitmapFactory.decodeByteArray(data, 0, data.length);
-            Matrix matrix = new Matrix();
+            String encoded = null;
+            JsonObject response = null;
 
-            matrix.postRotate(rotation, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
-            final Bitmap rotatedBitmap = Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
-
-            final File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
-
-            if (pictureFile == null) {
-                Log.d(TAG, "Error creating media file, check storage permissions: ");
-                return;
+            if (Config.USE_CACHED_MENUS) {
+                String menuToUse = Config.CACHED_MENU_TO_USE + ".json";
+                imgData = FileUtils.readCachedImage(context, Config.CACHED_MENU_TO_USE + ".jpg");
+                previewImage = FileUtils.bytesToBitmap(imgData);
+                newCacheFileNeeded = !FileUtils.isCachedFileAvailable(context, menuToUse);
+                if (newCacheFileNeeded) {
+                    encoded = FileUtils.convertToBase64(previewImage);
+                    doDetectionAPICall(encoded);
+                } else {
+                    response = FileUtils.readCachedResponseFile(context, menuToUse);
+                    endImageCapture(response);
+                }
+            } else {
+                imgData = data;
+                previewImage = correctImageOrientation(data);
+                encoded = FileUtils.convertToBase64(previewImage);
+                doDetectionAPICall(encoded);
             }
 
-            try {
 
-                FileOutputStream fos = new FileOutputStream(pictureFile);
-                rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-                fos.write(data);
-                fos.close();
-            } catch (FileNotFoundException e) {
-                Log.d(TAG, "File not found: " + e.getMessage());
-            } catch (IOException e) {
-                Log.d(TAG, "Error accessing file: " + e.getMessage());
-            }
+        }
 
-            String encoded = convertToBase64(rotatedBitmap);
+        private void endImageCapture(JsonObject response) {
+            File previewImageFile = FileUtils.createPreviewImageFile(context, previewImage, imgData);
+            FileUtils.writePreviewResponseFile(context, response.toString().getBytes());
+            showResponse(previewImageFile);
+            mDialog.dismiss();
+        }
 
+        private String createDetectionAPIRequest(String encoded) {
             JsonObject httpQuery = new JsonParser().parse(
                     "{" +
                             "\"requests\": [" +
@@ -191,72 +189,50 @@ public class MainActivity extends AppCompatActivity {
                             "}" +
                             "]" +
                             "}").getAsJsonObject();
+            return httpQuery.toString();
+        }
 
-            Callback<JsonObject> callbackTextDetection = new Callback<JsonObject>() {
+        private void doDetectionAPICall(String encoded) {
+            String jsonRequest = createDetectionAPIRequest(encoded);
+            Call<JsonObject> callTextDetection = apiInterface.detectText(jsonRequest);
+
+            callTextDetection.enqueue(new Callback<JsonObject>() {
                 @Override
-                public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                    Intent myIntent = new Intent(MainActivity.this, TextSelection.class);
-                    myIntent.putExtra(Constants.PREVIEW_IMAGE_KEY, pictureFile); //Optional parameters
-                    myIntent.putExtra(Constants.DETECTION_RESPONSE_KEY, response.body().toString()); //Optional parameters
-                    MainActivity.this.startActivity(myIntent);
-                    mDialog.dismiss();
-                    System.out.println(response.body());
+                public void onResponse(@NonNull Call<JsonObject> call, @NonNull Response<JsonObject> response) {
+                    if (newCacheFileNeeded) {
+                        FileUtils.createCacheFile(context, Config.CACHED_MENU_TO_USE + ".json");
+                        FileUtils.writeCacheResponseFile(context, response.body().toString().getBytes());
+                    }
+                    endImageCapture(response.body());
                 }
 
                 @Override
                 public void onFailure(Call<JsonObject> call, Throwable t) {
-                    System.out.println(t.getMessage());
+
                 }
-            };
-
-            Call<JsonObject> callTextDetection = apiInterface.detectText(httpQuery.toString());
-            callTextDetection.enqueue(callbackTextDetection);
+            });
         }
+
+        private void showResponse(File previewImageFile) {
+            Intent myIntent = new Intent(MainActivity.this, TextSelection.class);
+            myIntent.putExtra(Constants.PREVIEW_IMAGE_KEY, previewImageFile); //Optional parameters
+            myIntent.putExtra(Constants.DETECTION_RESPONSE_KEY, Config.PREVIEW_RESPONSE_FILE_NAME); //Optional parameters
+            MainActivity.this.startActivity(myIntent);
+        }
+
+
+        private Bitmap correctImageOrientation(byte[] data) {
+            BitmapFactory.Options bounds = new BitmapFactory.Options();
+            bounds.inJustDecodeBounds = true;
+            BitmapFactory.decodeByteArray(data, 0, data.length, bounds);
+
+            Bitmap bm = FileUtils.bytesToBitmap(data);
+            Matrix matrix = new Matrix();
+
+            matrix.postRotate(rotation, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
+            final Bitmap rotatedBitmap = Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
+            return rotatedBitmap;
+        }
+
     };
-
-
-    private static String convertToBase64(Bitmap bitmap) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-
-        return Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT);
-    }
-
-    /**
-     * Create a File for saving an image or video
-     */
-    private static File getOutputMediaFile(int type) {
-        // To be safe, you should check that the SDCard is mounted
-        // using Environment.getExternalStorageState() before doing this.
-
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "Menual");
-        // This location works best if you want the created images to be shared
-        // between applications and persist after your app has been uninstalled.
-
-        // Create the storage directory if it does not exist
-        if (!mediaStorageDir.exists()) {
-            if (!mediaStorageDir.mkdirs()) {
-                Log.d("Menual", "failed to create directory");
-                return null;
-            }
-        }
-
-        // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        File mediaFile;
-        if (type == MEDIA_TYPE_IMAGE) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "IMG_" + timeStamp + ".jpg");
-        } else if (type == MEDIA_TYPE_VIDEO) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "VID_" + timeStamp + ".mp4");
-        } else {
-            return null;
-        }
-
-        return mediaFile;
-    }
-
-
 }
