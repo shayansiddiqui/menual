@@ -13,6 +13,7 @@ import android.graphics.Rect;
 import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.util.IOUtils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -30,6 +32,7 @@ import com.google.gson.JsonParser;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -58,6 +61,28 @@ public class TextSelection extends AppCompatActivity {
     private String foodName;
     private MenuItem sendFoodMenuItem;
 
+
+    private JsonArray fetchBlocks(JsonElement element){
+        if(element!=null){
+            JsonElement responses = element.getAsJsonObject().get("responses");
+            if(responses !=null){
+                JsonElement fullTextAnnotation = responses.getAsJsonArray().get(0).getAsJsonObject().get("fullTextAnnotation");
+                if(fullTextAnnotation!=null){
+                    JsonElement pages = fullTextAnnotation.getAsJsonObject().get("pages");
+                    if(pages!=null){
+                        JsonElement blocks = pages.getAsJsonArray().get(0).getAsJsonObject().get("blocks");
+                        if(blocks!=null){
+                            return blocks.getAsJsonArray();
+                        }
+                    }
+
+                }
+            }
+        }
+
+        return null;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,8 +92,25 @@ public class TextSelection extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         File previewImage = (File) extras.get(Constants.PREVIEW_IMAGE_KEY);
-        JsonElement element = new JsonParser().parse(extras.get(Constants.DETECTION_RESPONSE_KEY).toString());
-        responseBlocks = element.getAsJsonObject().get("responses").getAsJsonArray().get(0).getAsJsonObject().get("fullTextAnnotation").getAsJsonObject().get("pages").getAsJsonArray().get(0).getAsJsonObject().get("blocks").getAsJsonArray();
+        String filename = (String) extras.get(Constants.DETECTION_RESPONSE_KEY);
+
+        StringBuffer fileContent = new StringBuffer();
+        byte[] buffer =new byte[1024];
+        int n;
+        try {
+            FileInputStream fis = TextSelection.this.openFileInput(filename);
+            while ((n = fis.read(buffer)) != -1)
+            {
+//                buffer = IOUtils.toByteArray(fis);
+                fileContent.append(new String(buffer, 0, n));
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        JsonElement element = new JsonParser().parse(fileContent.toString());
+        responseBlocks = fetchBlocks(element);
 
         previewImageView = findViewById(R.id.preview_image);
 
@@ -99,14 +141,17 @@ public class TextSelection extends AppCompatActivity {
                     System.out.println(vertices.toString());
                     JsonObject leftTop = vertices.get(0).getAsJsonObject();
                     JsonObject rightBottom = vertices.get(2).getAsJsonObject();
-                    int left = leftTop.get("x").getAsInt();
-                    int top = leftTop.get("y").getAsInt();
-                    int right = rightBottom.get("x").getAsInt();
-                    int bottom = rightBottom.get("y").getAsInt();
-                    System.out.println(left + " " + top + " " + right + " " + bottom);
-                    Rect rect = new Rect(left, top, right, bottom);
-                    cnvs.drawRect(left, top, right, bottom, paint);
-                    boundingBoxes.add(new BoundingBox(rect, block.getAsJsonObject()));
+                    if(leftTop.get("x")!=null && leftTop.get("y")!=null && rightBottom.get("x")!=null && rightBottom.get("y")!=null){
+                        int left = leftTop.get("x").getAsInt();
+                        int top = leftTop.get("y").getAsInt();
+                        int right = rightBottom.get("x").getAsInt();
+                        int bottom = rightBottom.get("y").getAsInt();
+                        System.out.println(left + " " + top + " " + right + " " + bottom);
+                        Rect rect = new Rect(left, top, right, bottom);
+                        cnvs.drawRect(left, top, right, bottom, paint);
+                        boundingBoxes.add(new BoundingBox(rect, block.getAsJsonObject()));
+                    }
+
 //                cnvs.drawBitmap(bitmap, 0, 0, null);
 
                 }
