@@ -42,6 +42,14 @@
                 android:label="@string/title_activity_text_selection"
                 android:value=".MainActivity" />
         </activity>
+        <activity
+            android:name=".ScanHistory"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:label="@string/title_activity_scan_history"
+                android:value=".MainActivity" />
+        </activity>
     </application>
 
 </manifest>
