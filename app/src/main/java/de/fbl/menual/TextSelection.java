@@ -267,9 +267,17 @@ public class TextSelection extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_send_food) {
-           // foodName = "xnsadfjndsf";
+
+            //foodName = "SADFSDVSDA";
+            //String foodName2 = "SADFSDVSDA";
+            //String foodName3 = "Schezwan noodles";
+            //String foodName4 = "Salmon Salad";
+
             getNutrition(foodName);
-            return true;
+            //getNutrition(foodName2);
+            //getNutrition(foodName3);
+            //getNutrition(foodName4);
+            //return true;
         }
 
         return super.onOptionsItemSelected(item);
