@@ -295,7 +295,9 @@ public class TextSelection extends AppCompatActivity {
 
                     JsonObject lresponse = response.body().getAsJsonArray("foods").get(0).getAsJsonObject();
                     String foodQuery = lresponse.get("food_name").toString();
-                    if (foodQuery.contains(foodName)) //only outputs food that is matches/is contained in the query
+                    String foodQueryLow = foodQuery.toLowerCase();
+                    String foodNameLow = foodName.toLowerCase();
+                    if (foodQueryLow.contains(foodNameLow)) //only outputs food that is matches/is contained in the query
                     {
                         System.out.println(response.body().toString());
                         String sApiValues = response.body().toString();
