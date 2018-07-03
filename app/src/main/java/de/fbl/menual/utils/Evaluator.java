@@ -129,8 +129,13 @@ public class Evaluator {
         //return (int) score;
     }
 
-
-
+/**
+public int[][] evaluate multipleDishes(int userMahlzeit, int[] preferences, double[] aPiValues, String[] dishes)
+    {
+        int[][] foodresults = new int[dishes.length][6];
+        for()
+    }
+ */
 
 
 
