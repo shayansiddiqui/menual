@@ -66,7 +66,7 @@ public class TextSelection extends AppCompatActivity {
     private ApiInterface apiInterface;
     private String foodName;
     private MenuItem sendFoodMenuItem;
-
+    private int meal_type;
 
     private JsonArray fetchBlocks(JsonElement element){
         if(element!=null){
@@ -113,7 +113,8 @@ public class TextSelection extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         File previewImage = (File) extras.get(Constants.PREVIEW_IMAGE_KEY);
         String filename = (String) extras.get(Constants.DETECTION_RESPONSE_KEY);
-
+        meal_type = (int) extras.get(Constants.MEAL_TYPE_KEY);
+        System.out.println("MEALTYPE:"+ meal_type);
         StringBuffer fileContent = new StringBuffer();
         byte[] buffer =new byte[1024];
         int n;
@@ -268,14 +269,14 @@ public class TextSelection extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_send_food) {
            // foodName = "xnsadfjndsf";
-            getNutrition(foodName);
+            getNutrition(foodName, meal_type);
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void getNutrition(final String foodName) {
+    private void getNutrition(final String foodName, final int meal_type) {
         final ProgressDialog mDialog = ProgressDialog.show(TextSelection.this, "In progress", "Loading nutrition...", true);
         JsonObject httpQuery = new JsonParser().parse(
                 "{" +
@@ -344,7 +345,8 @@ public class TextSelection extends AppCompatActivity {
                         int[] preferences = {1, 1, 1, 1, 1};
                         System.out.println();
                         System.out.println("The dish receives the following scores");
-                        int scores[] = e.evaluateDish(1, preferences, apiValues);
+                        int scores[] = e.evaluateDish(meal_type, preferences, apiValues);
+                        System.out.println(meal_type);
                         for (int i = 0; i < scores.length; i++)
                             System.out.println(scores[i]);
                         System.out.println();

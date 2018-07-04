@@ -54,14 +54,7 @@ public class SuggestionsAdapter extends BaseAdapter implements ListAdapter {
 
         //Handle buttons and add onClickListeners
         TriStateToggleButton prefSwitch = (TriStateToggleButton) view.findViewById(R.id.preference_switch);
-        listItemText.getContext().
-                setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                System.out.println("CLICKED");
 
-            }
-        });
         return view;
     }
 }

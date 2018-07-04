@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 
 import com.google.gson.JsonObject;
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private CameraPreview mPreview;
     private int rotation;
     private ApiInterface apiInterface;
+    private int mealType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +63,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button button = findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setMealType(1);
+            }
+        });
+
+        Button button1 = findViewById(R.id.button1);
+        button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setMealType(2);
+            }
+        });
+        Button button2 = findViewById(R.id.button2);
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setMealType(3);
+            }
+        });
 
         // Create an instance of Camera
         mCamera = getCameraInstance();
@@ -217,6 +241,7 @@ public class MainActivity extends AppCompatActivity {
             Intent myIntent = new Intent(MainActivity.this, TextSelection.class);
             myIntent.putExtra(Constants.PREVIEW_IMAGE_KEY, previewImageFile); //Optional parameters
             myIntent.putExtra(Constants.DETECTION_RESPONSE_KEY, Config.PREVIEW_RESPONSE_FILE_NAME); //Optional parameters
+            myIntent.putExtra(Constants.MEAL_TYPE_KEY, getMealType());
             MainActivity.this.startActivity(myIntent);
         }
 
@@ -235,4 +260,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
     };
+
+    private void setMealType(int meal_type){
+        mealType = meal_type;
+    }
+
+    private int getMealType(){
+        return mealType;
+    }
 }
