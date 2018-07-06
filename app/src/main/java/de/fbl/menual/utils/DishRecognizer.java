@@ -1,5 +1,8 @@
 package de.fbl.menual.utils;
-
+/**
+ * @author Christopher Harth-Kitzerow
+ *
+ */
 public class DishRecognizer {
 
     public static String[] getDishes(String menuText) {

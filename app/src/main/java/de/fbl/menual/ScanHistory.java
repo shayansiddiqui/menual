@@ -1,3 +1,4 @@
+/**
 package de.fbl.menual;
 
 import android.os.Bundle;
@@ -6,6 +7,7 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+import de.fbl.menual.R;
 import de.fbl.menual.adapters.PreferenceAdapter;
 import de.fbl.menual.adapters.SuggestionsAdapter;
 
@@ -52,3 +54,4 @@ public class ScanHistory extends AppCompatActivity {
         }
     }
 }
+*/

@@ -268,15 +268,15 @@ public class TextSelection extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_send_food) {
 
-            //foodName = "SADFSDVSDA";
-            //String foodName2 = "SADFSDVSDA";
-            //String foodName3 = "Schezwan noodles";
-            //String foodName4 = "Salmon Salad";
+            foodName = "Cheese Cake";
+            String foodName2 = "Chocolate";
+          String foodName3 = "Schezwan noodles";
+          String foodName4 = "Salmon Salad";
 
             getNutrition(foodName);
-            //getNutrition(foodName2);
-            //getNutrition(foodName3);
-            //getNutrition(foodName4);
+            getNutrition(foodName2);
+         getNutrition(foodName3);
+         getNutrition(foodName4);
             //return true;
         }
 
@@ -311,7 +311,11 @@ public class TextSelection extends AppCompatActivity {
                         String sApiValues = response.body().toString();
 
                         //if(sApiValues.contains(foodName)) {
-                        double[] apiValues = new double[32];
+                        double[] apiValues = new double[34];
+                        for(int i = 0;i<apiValues.length;i++)
+                        {
+                            apiValues[i] = -1;
+                        }
                         String a = "";
                         String[] splitApiValues = sApiValues.split("full_nutrients", -1);
                         String[] subHaupt = splitApiValues[0].split(",", -1);
@@ -327,7 +331,10 @@ public class TextSelection extends AppCompatActivity {
                             }
                         }
                         String[] subExtra = splitApiValues[1].split("\\}", -1);
-                        String[] inhaltExtra = {"attr_id\":645,", "attr_id\":646,"}; //645 monosaturated, 646 polysaturated
+                        String[] inhaltExtra = {"attr_id\":645,", "attr_id\":646,","attr_id\":318,","attr_id\":324,","attr_id\":323,","attr_id\":430,","attr_id\":404,","attr_id\":405,","attr_id\":406,","attr_id\":415,","attr_id\":417,","attr_id\":410,","attr_id\":???,","attr_id\":418,","attr_id\":401,","attr_id\":307,","attr_id\":???,","attr_id\":???,","attr_id\":301,","attr_id\":305,","attr_id\":304,","attr_id\":303,","attr_id\":313,","attr_id\":309,","attr_id\":317,","attr_id\":605,","attr_id\":212,"};
+                        //645 monosaturated, 646 polysaturated, next: Vitamin A(IU),D(IU),E(mg),K(µg),B1(mg),B2(mg),Niacin(mg),B6(mg),Folat(µg),Pantothenic acid(mg), Biotin(currently not in nutritionX),B12(µg),C(mg)
+                        //Minerals Natrium, Chlorid, Kalium, Calcium, Phosphor,Magnesium,Eisen, Fluorid(Microgramm), Zink, Selen(Microgramm)
+                        //Transfats, Fructose
                         for (int i = 0; i < subExtra.length; i++) {
                             for (int j = 0; j < inhaltExtra.length; j++) {
                                 if (subExtra[i].contains(inhaltExtra[j])) {
@@ -338,6 +345,7 @@ public class TextSelection extends AppCompatActivity {
                                 }
                             }
                         }
+                        apiValues = Evaluator.nutritionXgetCorrectUnits(apiValues);
 
                         //Test Code
                         String s = "";
@@ -345,8 +353,8 @@ public class TextSelection extends AppCompatActivity {
                         System.out.println("The dish contains the following nutrients");
                         for (double i : apiValues)
                             s += Double.toString(i) + "\n";
-                        for (int i = 8; i < apiValues.length; i++)
-                            apiValues[i] = 0;
+                        //for (int i = 8; i < apiValues.length; i++) //This call ignores minerals and vitamines
+                        //    apiValues[i] = 0;
                         System.out.println(s);
                         Evaluator e = new Evaluator();
                         int[] preferences = {1, 1, 1, 1, 1};
@@ -394,8 +402,8 @@ public class TextSelection extends AppCompatActivity {
         int[] sortedScores = scores.clone();
         Arrays.sort(sortedScores);
 
-        String[] ingredients = {"", "proteins", "sugar", "fiber", "healthy fats", "vitamins"};
-        String[] ingredientsUnhealthy = {"", "proteins", "sugar", "fiber", "saturated fats", "vitamins"};
+        String[] ingredients = {"", "proteins", "sugar", "fiber", "healthy fats", "vitamins","minerals"};
+        String[] ingredientsUnhealthy = {"", "proteins", "sugar", "fiber", "unhealthy fats", "vitamins","minerals"};
 
 
         String comment1 = "";
