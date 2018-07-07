@@ -116,7 +116,7 @@ public class EvaluatorUtils {
                         }
 
                     }
-                    return new FoodItem(foodName,result, comments);
+                    return new FoodItem(foodQuery,result, comments);
                 }
             }
         }
