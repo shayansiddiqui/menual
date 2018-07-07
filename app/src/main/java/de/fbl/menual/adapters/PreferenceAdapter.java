@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 import de.fbl.menual.R;
 import it.beppi.tristatetogglebutton_library.TriStateToggleButton;
-/**
+
 public class PreferenceAdapter extends BaseAdapter implements ListAdapter {
 
     private ArrayList<String> list = new ArrayList<String>();
@@ -49,12 +49,12 @@ public class PreferenceAdapter extends BaseAdapter implements ListAdapter {
         }
 
         //Handle TextView and display string from your list
-       // TextView listItemText = (TextView) view.findViewById(R.id.list_item_string);
-       // listItemText.setText(list.get(position));
+        TextView listItemText = (TextView) view.findViewById(R.id.list_item_string);
+        listItemText.setText(list.get(position));
 
         //Handle buttons and add onClickListeners
-       // TriStateToggleButton prefSwitch = (TriStateToggleButton) view.findViewById(R.id.preference_switch);
-/**
+        TriStateToggleButton prefSwitch = (TriStateToggleButton) view.findViewById(R.id.preference_switch);
+
         prefSwitch.setOnToggleChanged(new TriStateToggleButton.OnToggleChanged() {
             @Override
             public void onToggle(TriStateToggleButton.ToggleStatus toggleStatus, boolean booleanToggleStatus, int toggleIntValue) {
@@ -74,4 +74,3 @@ public class PreferenceAdapter extends BaseAdapter implements ListAdapter {
 
 
 }
-*/
