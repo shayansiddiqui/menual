@@ -15,8 +15,12 @@
       },
       "oauth_client": [
         {
-          "client_id": "537940509572-c3kl6rl64lfo71p1621toop1q8v2j7df.apps.googleusercontent.com",
-          "client_type": 3
+          "client_id": "537940509572-aec2ksoq3sfvsu4lmuma7ve031k99580.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "de.fbl.menual",
+            "certificate_hash": "b89020dff9d71f65273c90525a1e78342f18b024"
+          }
         },
         {
           "client_id": "537940509572-c3kl6rl64lfo71p1621toop1q8v2j7df.apps.googleusercontent.com",
@@ -33,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "537940509572-c3kl6rl64lfo71p1621toop1q8v2j7df.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2
