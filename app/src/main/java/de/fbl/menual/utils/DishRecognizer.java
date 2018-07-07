@@ -6,7 +6,7 @@ package de.fbl.menual.utils;
 public class DishRecognizer {
 
     public static String[] getDishes(String menuText) {
-        String[] candidates = menuText.split("\n");
+        String[] candidates = menuText.replace("\\n", ",").split(",");
         for (int i = 0; i < candidates.length; i++) {
             candidates[i] = removeNoiseAtStart(candidates[i]);
             candidates[i] = removeNonAlphabeticCharacters(candidates[i]);
@@ -177,8 +177,8 @@ public class DishRecognizer {
         {
             for(int j = i+1; j< candidates.length;j++)
             {
-                if(candidates[j].equals(candidates[i]));
-                candidates[j] = "";
+                if(candidates[j].equals(candidates[i]))
+                    candidates[j] = "";
             }
         }
         return candidates;
