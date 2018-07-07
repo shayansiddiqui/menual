@@ -7,7 +7,7 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-import de.fbl.menual.adapters.PreferenceAdapter;
+//import de.fbl.menual.adapters.PreferenceAdapter;
 
 public class DietPreferences extends AppCompatActivity {
 
@@ -30,11 +30,11 @@ public class DietPreferences extends AppCompatActivity {
         list.add("Fish");
 
         //instantiate custom adapter
-        PreferenceAdapter adapter = new PreferenceAdapter(list, this);
+        //PreferenceAdapter adapter = new PreferenceAdapter(list, this);
 
         //handle listview and assign adapter
         ListView lView = (ListView) findViewById(R.id.preference_list);
-        lView.setAdapter(adapter);
+      //  lView.setAdapter(adapter);
     }
 
 }

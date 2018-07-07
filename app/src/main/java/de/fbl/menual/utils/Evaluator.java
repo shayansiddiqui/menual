@@ -276,10 +276,10 @@ public class Evaluator {
         return (int) score;
     }
 
-    public static String[] getStatistics(String foodName, double[] apiValues, int[] scores) {
+    public static String[] getStatistics(String foodName, double[] apiValues, int[] scores, int mealtype) {
 
         String[] statistic = new String[39];
-        statistic[0] = "Dish: " + foodName;
+        statistic[0] = Evaluator.getMealtypeString(mealtype) +":  " + foodName;
         statistic[1] = "Total Score";
         statistic[2] = "Macro Score";
         statistic[3] = "Sugar Score";
@@ -334,7 +334,7 @@ public class Evaluator {
      * @param scores    Scores as calculated in getNutrition(foodName)
      * @param mealtype  Mealtype selected by the user
      * @return Detailed statistics in this order:
-     * [0]:mealtype: Breakfast(1),lunch(2),dinner(3),snack(4) [1]:total score
+     * [0]:mealtype: Breakfast (0),lunch(1),dinner(2),snack(3) [1]:total score
      * [2-7]:  macroScore,Sugar Score, Fiber Score, Fat score, Vitamin Bonus(Vitamin score-100), Minerals Bonus(Minerals score-100) (can be negative!!)
      * in this exact order
      * [8-11]: grams of Proteins, fats, carbs, sugar in this order
