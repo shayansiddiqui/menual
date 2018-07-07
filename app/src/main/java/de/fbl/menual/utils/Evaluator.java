@@ -117,14 +117,14 @@ public class Evaluator {
         score = makroscore*2*(1-counter[0]) + sugarscore*(1+(3*highSugar))*(1-counter[1]) + ballaststoffscore*1*(1-counter[2]) + fatscore*counter[3] + (vitaminscore-100);
         if(counter[0]*2 - counter[1]*(2+(2*highSugar)) - counter[2] - (3-counter[3]) == -10)
         {
-            System.out.println("Not enough information on dish to evaluate");
+//            System.out.println("Not enough information on dish to evaluate");
             int a[] = {-1};
             return a;
 
         }
         score = score/(10- (3*(1-highSugar)) - counter[0]*2 - counter[1]*1 - counter[2] - (3-counter[3]));
         int[] scores = {(int)score, makroscore, sugarscore, ballaststoffscore, fatscore, vitaminscore};
-        System.out.println("total score, makros, sugar, ballast, fat, vitamins");
+//        System.out.println("total score, makros, sugar, ballast, fat, vitamins");
         return scores;
         //return (int) score;
     }
