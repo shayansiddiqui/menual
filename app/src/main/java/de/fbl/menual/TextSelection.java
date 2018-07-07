@@ -43,6 +43,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 import de.fbl.menual.api.ApiInterface;
 import de.fbl.menual.api.RetrofitInstance;
 import de.fbl.menual.models.BoundingBox;
@@ -269,14 +270,14 @@ public class TextSelection extends AppCompatActivity {
         if (id == R.id.action_send_food) {
 
             foodName = "Cheese Cake";
-            String foodName2 = "Chocolate";
-          String foodName3 = "Schezwan noodles";
-          String foodName4 = "Salmon Salad";
+    //        String foodName2 = "Chocolate";
+      //    String foodName3 = "Schezwan noodles";
+    //      String foodName4 = "Salmon Salad";
 
             getNutrition(foodName);
-            getNutrition(foodName2);
-         getNutrition(foodName3);
-         getNutrition(foodName4);
+        //    getNutrition(foodName2);
+        // getNutrition(foodName3);
+        // getNutrition(foodName4);
             //return true;
         }
 
@@ -305,6 +306,7 @@ public class TextSelection extends AppCompatActivity {
                     String foodQuery = lresponse.get("food_name").toString();
                     String foodQueryLow = foodQuery.toLowerCase();
                     String foodNameLow = foodName.toLowerCase();
+
                     if (foodQueryLow.contains(foodNameLow)) //only outputs food that is matches/is contained in the query
                     {
                         System.out.println(response.body().toString());
@@ -331,7 +333,7 @@ public class TextSelection extends AppCompatActivity {
                             }
                         }
                         String[] subExtra = splitApiValues[1].split("\\}", -1);
-                        String[] inhaltExtra = {"attr_id\":645,", "attr_id\":646,","attr_id\":318,","attr_id\":324,","attr_id\":323,","attr_id\":430,","attr_id\":404,","attr_id\":405,","attr_id\":406,","attr_id\":415,","attr_id\":417,","attr_id\":410,","attr_id\":???,","attr_id\":418,","attr_id\":401,","attr_id\":307,","attr_id\":???,","attr_id\":???,","attr_id\":301,","attr_id\":305,","attr_id\":304,","attr_id\":303,","attr_id\":313,","attr_id\":309,","attr_id\":317,","attr_id\":605,","attr_id\":212,"};
+                        String[] inhaltExtra = {"attr_id\":645,", "attr_id\":646,","attr_id\":318,","attr_id\":324,","attr_id\":323,","attr_id\":430,","attr_id\":404,","attr_id\":405,","attr_id\":406,","attr_id\":415,","attr_id\":417,","attr_id\":410,","attr_id\":???,","attr_id\":418,","attr_id\":401,","attr_id\":307,","attr_id\":???,","attr_id\":306,","attr_id\":301,","attr_id\":305,","attr_id\":304,","attr_id\":303,","attr_id\":313,","attr_id\":309,","attr_id\":317,","attr_id\":605,","attr_id\":212,"};
                         //645 monosaturated, 646 polysaturated, next: Vitamin A(IU),D(IU),E(mg),K(µg),B1(mg),B2(mg),Niacin(mg),B6(mg),Folat(µg),Pantothenic acid(mg), Biotin(currently not in nutritionX),B12(µg),C(mg)
                         //Minerals Natrium, Chlorid, Kalium, Calcium, Phosphor,Magnesium,Eisen, Fluorid(Microgramm), Zink, Selen(Microgramm)
                         //Transfats, Fructose
@@ -346,23 +348,44 @@ public class TextSelection extends AppCompatActivity {
                             }
                         }
                         apiValues = Evaluator.nutritionXgetCorrectUnits(apiValues);
+                        double[] apiValuesForStatistic = apiValues.clone();
+                        foodQuery = Evaluator.capitalize(foodQuery);
+
 
                         //Test Code
-                        String s = "";
-                        System.out.println("Food result for: " + foodName);
-                        System.out.println("The dish contains the following nutrients");
-                        for (double i : apiValues)
-                            s += Double.toString(i) + "\n";
+                        //String s = "";
+                       // System.out.println("Food result for: " + foodQuery);
+                       // System.out.println("The dish contains the following nutrients");
+                       // for (double i : apiValues)
+                        //    s += Double.toString(i) + "\n";
                         //for (int i = 8; i < apiValues.length; i++) //This call ignores minerals and vitamines
                         //    apiValues[i] = 0;
-                        System.out.println(s);
+                        //System.out.println(s);
                         Evaluator e = new Evaluator();
                         int[] preferences = {1, 1, 1, 1, 1};
-                        System.out.println();
-                        System.out.println("The dish receives the following scores");
+                        //System.out.println();
+                        //System.out.println("The dish receives the following scores");
                         int scores[] = e.evaluateDish(1, preferences, apiValues);
-                        for (int i = 0; i < scores.length; i++)
-                            System.out.println(scores[i]);
+                        int[] scoresForStatistic = scores.clone();
+                        int mealtype = 1; //mockup, replace with real value later
+                        double[] staticsValues = Evaluator.getStatisticsValues(apiValuesForStatistic,scoresForStatistic,mealtype); //relevant for statistic
+                        String[] statisticText = Evaluator.getStatistics(foodQuery, apiValuesForStatistic,scoresForStatistic); //relevant for statistic
+                        for(int i = 0; i<statisticText.length;i++)
+                        {
+                            if(i != 0) {
+                                if (staticsValues[i] != -1) {
+                                    System.out.println("" + statisticText[i] + "  " + staticsValues[i]);
+                                }
+                            }
+                            else
+                            {
+                                System.out.println("" + statisticText[i] +" Mealtype: "+ Evaluator.getMealtypeString((int) staticsValues[0]));
+                            }
+
+                        }
+                                                System.out.println();
+                       // for (int i = 0; i < scores.length; i++)
+                       //     System.out.println(scores[i]);
                         System.out.println();
                         System.out.println("The dish receives the following colour");
 
@@ -405,11 +428,12 @@ public class TextSelection extends AppCompatActivity {
         String[] ingredients = {"", "proteins", "sugar", "fiber", "healthy fats", "vitamins","minerals"};
         String[] ingredientsUnhealthy = {"", "proteins", "sugar", "fiber", "unhealthy fats", "vitamins","minerals"};
 
-
-        String comment1 = "";
-        String comment2 = "";
+        String colour = ""; //relevant for statistic
+        String comment1 = ""; //relevant for statistic
+        String comment2 = ""; //relevant for statistic
         if (scores[0] > 100) {
             System.out.println("green");
+            colour = "green";
             int max = sortedScores[sortedScores.length - 1];
             int max2 = sortedScores[sortedScores.length - 2];
 
@@ -434,8 +458,10 @@ public class TextSelection extends AppCompatActivity {
         } else {
             if (scores[0] > 90) {
                 System.out.println("yellow");
+                colour = "yellow";
             } else {
                 System.out.println("red");
+                colour = "red";
             }
             int min = sortedScores[0];
             int min2 = sortedScores[1];
@@ -503,6 +529,7 @@ public class TextSelection extends AppCompatActivity {
         Map<String, String> comments = new HashMap<>();
         comments.put("comment1", comment1);
         comments.put("comment2", comment2);
+
         return comments;
 
     }
