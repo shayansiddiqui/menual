@@ -9,7 +9,7 @@ import com.google.gson.JsonParser;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import de.fbl.menual.ScanHistory;
+//import de.fbl.menual.ScanHistory;
 import de.fbl.menual.api.ApiInterface;
 import de.fbl.menual.api.RetrofitInstance;
 import retrofit2.Call;
@@ -80,10 +80,10 @@ public class NutritionUtils {
                     apiValues[i] = 0;
                 System.out.println(s);
                 Evaluator e = new Evaluator();
-                int[] preferences = {1, 1, 1, 1, 1};
+                int[] preferences = {1, 1, 1, 1, 1}; //add preferences from the user here
                 System.out.println();
                 System.out.println("The dish receives the following scores");
-                int scores[] = e.evaluateDish(1, preferences, apiValues);
+                int scores[] = e.evaluateDish(1, preferences, apiValues); //add correct mealtype (breakfast,lunch,etc) here
                 for (int i = 0; i < scores.length; i++)
                     System.out.println(scores[i]);
                 System.out.println();

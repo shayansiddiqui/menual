@@ -1,4 +1,4 @@
-package de.fbl.menual.adapters;
+/**package de.fbl.menual.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -40,6 +40,7 @@ public class SuggestionsAdapter extends BaseAdapter implements ListAdapter {
         //just return 0 if your list items do not have an Id variable.
     }
 
+    /
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         View view = convertView;
@@ -57,4 +58,6 @@ public class SuggestionsAdapter extends BaseAdapter implements ListAdapter {
 
         return view;
     }
+
 }
+ */
