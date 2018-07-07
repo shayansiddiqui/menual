@@ -369,17 +369,17 @@ public class TextSelection extends AppCompatActivity {
                         int[] scoresForStatistic = scores.clone();
                         int mealtype = 1; //mockup, replace with real value later
                         double[] staticsValues = Evaluator.getStatisticsValues(apiValuesForStatistic,scoresForStatistic,mealtype); //relevant for statistic
-                        String[] statisticText = Evaluator.getStatistics(foodQuery, apiValuesForStatistic,scoresForStatistic); //relevant for statistic
+                        String[] statisticText = Evaluator.getStatistics(foodQuery, apiValuesForStatistic,scoresForStatistic, mealtype); //relevant for statistic
                         for(int i = 0; i<statisticText.length;i++)
                         {
                             if(i != 0) {
                                 if (staticsValues[i] != -1) {
-                                    System.out.println("" + statisticText[i] + "  " + staticsValues[i]);
+                                    System.out.println("["+i+"] " + statisticText[i] + "  " + staticsValues[i]);
                                 }
                             }
                             else
                             {
-                                System.out.println("" + statisticText[i] +" Mealtype: "+ Evaluator.getMealtypeString((int) staticsValues[0]));
+                                System.out.println("["+i+"] " + statisticText[i]);
                             }
 
                         }
