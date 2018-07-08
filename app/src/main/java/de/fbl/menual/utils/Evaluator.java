@@ -304,11 +304,11 @@ public class Evaluator {
         statistic[19] = "Vitamin K";
         statistic[20] = "Vitamin B1";
         statistic[21] = "Vitamin B2";
-        statistic[22] = "Niacin";
+        statistic[22] = "Niacin (B3)";
         statistic[23] = "Vitamin B6";
-        statistic[24] = "Folat";
-        statistic[25] = "Pantothenic Acid";
-        statistic[26] = "Biotin"; //Currently not integrated
+        statistic[24] = "Folate (B9)";
+        statistic[25] = "Pantothenic Acid (B5)";
+        statistic[26] = "Biotin (B5)"; //Currently not integrated
         statistic[27] = "Vitamin B12";
         statistic[28] = "Vitamin C";
 
@@ -414,4 +414,88 @@ public class Evaluator {
         String[] mealtypeS = {"Breakfast", "Lunch", "Dinner", "Snack"};
         return mealtypeS[mealtype];
     }
-}
+    public static String[][] getVitaminesExplanation() {
+        /** identical to the following structure
+         *     statistic[16] = "Vitamin A";
+         statistic[17] = "Vitamin D";
+         statistic[18] = "Vitamin E";
+         statistic[19] = "Vitamin K";
+         statistic[20] = "Vitamin B1";
+         statistic[21] = "Vitamin B2";
+         statistic[22] = "Niacin (B3)";
+         statistic[23] = "Vitamin B6";
+         statistic[24] = "Folate (B9)";
+         statistic[25] = "Pantothenic Acid (B5)";
+         statistic[26] = "Biotin (B7)"; //Currently not integrated
+         statistic[27] = "Vitamin B12";
+         statistic[28] = "Vitamin C";
+         */
+        String[][] explanation = new String[13][2];
+        explanation[0][0] = "Main Function: Vitamin A is important for vision. It helps the retina of the eye to function properly, particularly at night. Night blindness is an early sign of deficiency and blindness can result if preventative steps are not taken. Vitamin A also aids in maintaining healthy skin and it is sometimes used in the treatment of acne. It also plays a role in the growth of bones and it helps to regulate the immune system and fight infection.";
+        explanation[0][1] = "Source: Vitamin A is found in deep orange and dark green fruits and vegetables such as carrots, broccoli, kale and spinach. Eggs also contain vitamin A.";
+        explanation[1][0] = "Main Function: The sunshine vitamin plays a key role in bone health. Low levels of vitamin D are linked with a growing list of health problems, including multiple sclerosis, osteoporosis, osteoarthritis, rickets, heart disease, diabetes, depression and several kinds of cancers.";
+        explanation[1][1] = "Source: Unlike other vitamins, the best way to obtain vitamin D is not from food but to simply step outdoors. The reason: our bodies develop it from sunshine. Often, about 15 minutes of exposure to sunlight a day is enough for the body to produce an adequate amount of vitamin D.";
+        explanation[2][0] = "Main Function: Studies have shown that people with high dietary intakes of vitamin E and zinc are protected against age-related macular degeneration, an eye condition common among people aged 50 and older. Vitamin E also protects against Alzheimer’s disease. High in antioxidants, vitamin E helps the immune cells to produce antibodies, and it can help to reverse some of the decline in immune function that comes with ageing.";
+        explanation[2][1] = "Source: Vitamin E is common in seeds and nuts such as sunflower seeds, peanuts and almonds. Whole-grain cereals and rice bran are also good sources of this vitamin.";
+        explanation[3][0] = "Main Function: Vitamin K helps your blood to clot normally and it plays an important role in bone health.";
+        explanation[3][1] = "Source: For almost everyone, the bacteria in our intestines makes vitamin K. It’s also found in green, leafy vegetables, including spinach, broccoli and brussels sprouts. Fruits such as grapes, kiwi fruit and avocados are also rich in vitamin K.";
+        explanation[4][0] = "Main Function: All eight of the B vitamins help the body to convert fat and carbohydrates into energy. They are needed for healthy skin, hair, eyes and liver. Thiamine was the first to be discovered. It is essential for heart health and for the brain and nervous system to function properly.";
+        explanation[4][1] = "Source: Whole grains are great sources of vitamin B1. You can also find it in yeast and yeast extract, brown rice, oatmeal, cauliflower and potatoes. Some processed foods also have vitamin B1 added.";
+        explanation[5][0] = "Main Function: Riboflavin is an antioxidant that fights the free radicals that damage the body. It plays a key role in breaking down and distributing fats, carbohydrates and proteins throughout the body. It also aids in the absorption of iron and vitamin B6.";
+        explanation[5][1] = "Source: Excellent sources of vitamin B2 include mushrooms, soybeans, yoghurt, eggs and dark, leafy greens such as brussels sprouts, broccoli and spinach. Some commercial flours and cereals are also fortified with this vitamin. Be sure to store these foods in the dark, since riboflavin is easily destroyed by light. It can also be lost in water when food is boiled or soaked.";
+        explanation[6][0] = "Main Function: Vitamin B3 helps to increase the level of good cholesterol (HDL) in your body, thus improving circulation. It is also involved in the repair of DNA.";
+        explanation[6][1] = "Source: Among the better sources of vitamin B3 are avocados, tomatoes, dates, asparagus and nuts.";
+        explanation[7][0] = "Main Function: Like the other B vitamins, B6 helps the body to convert fat and carbohydrates into energy, and it contributes to healthy skin, hair and eyes. Vitamin B6 is also involved in brain development of the fetus during pregnancy and infancy, and it helps the immune system to function well. It is sometimes used as a treatment for morning sickness.";
+        explanation[7][1] = "Source: You can obtain vitamin B6 from bananas, nuts, starchy vegetables (like potatoes) and whole-grain products.";
+        explanation[8][0] = "Main Function: Vitamin B9 aids in cell division and growth, such as in infancy and during pregnancy. It also plays a part in the proper development of a baby’s nervous system. It helps our bodies to produce healthy red blood cells and to prevent anaemia.";
+        explanation[8][1] = "Source: Leafy vegetables like spinach and turnip greens are a principal source of vitamin B9. Broccoli, certain fruit juices and legumes (including beans, peas and lentils) are also good sources of this vitamin. And it’s common in fortified cereals and bread.";
+        explanation[9][0] = "Main Function: Vitamin B5 aids in the manufacture of red blood cells and it helps to maintain a healthy digestive tract. It also helps the body to use other vitamins, especially B2.";
+        explanation[9][1] = "Source: While it’s available in a wide variety of foods, much of it can be lost if the food is cooked or processed. Among the good sources of vitamin B5 are broccoli, avocados, lentils, cauliflower and whole grains.";
+        explanation[10][0] = "Main Function: Biotin is necessary for cell growth and metabolism. It aids in the transfer of carbon dioxide in the body, and it is believed to strengthen the hair and nails. It helps the body to maintain a steady blood sugar level.";
+        explanation[10][1] = "Source: Fortified cereals are your best bet. You can also find vitamin B7 in barley, corn, nuts and soy.";
+        explanation[11][0] = "Main Function: Vitamin B12 plays an important role in preventing a number of neurological problems, including numbness or tingling in the hands and feet, insomnia, loss of memory and depression. It helps our body’s red blood cells to mature normally and it aids in the development of DNA, our genetic material.";
+        explanation[11][1] = "Source: Vegetarians and vegans tend to have lower intakes of vitamin B12 because plant foods do not naturally contain it. However, soy and rice milks commonly include B12 as an additive, as do yeast extracts and vegetarian burgers. Vitamin B12 can also be found in eggs, milk, cheese, yoghurt and other dairy products.";
+        explanation[12][0] = "Main Function: Practically a celebrity in the world of vitamins, almost everybody reaches for a vitamin C pill at the first sign of a cold. Besides increasing the production of disease-fighting white blood cells and antibodies, thereby boosting the immune system, vitamin C is helpful in maintaining good eyesight.";
+        explanation[12][1] = "Source: Many fruits are rich in vitamin C, including citrus, pineapple, berries and papaya.";
+        return explanation;
+    }
+    public static String[][] getMineralsExplanation()
+    {
+        /**
+         * identical to the following structure
+         * statistic[29] = "Sodium";
+         statistic[31] = "Chloride"; //currently not integrated
+         statistic[30] = "Potassium";
+         statistic[32] = "Calcium";
+         statistic[33] = "Phosphorus";
+         statistic[34] = "Magnesium";
+         statistic[35] = "Iron";
+         statistic[36] = "Fluoride";
+         statistic[37] = "Zinc";
+         statistic[38] = "Selenium";
+         */
+        String[][] explanation = new String[10][2];
+        explanation[0][0]="What it does: Important for fluid balance. Don't get more than the recommended daily amount!";
+        explanation[0][1]="Foods that have it: Foods made with added salt, such as processed and restaurant foods";
+        explanation[1][0]="[Not integrated]";
+        explanation[1][1]="[not integrated]";
+        explanation[2][0]="What it does: Helps control blood pressure, makes kidney stones less likely";
+        explanation[2][1]="Foods that have it: Potatoes, bananas, yogurt, milk, yellowfin tuna, soybeans, and a variety of fruits and vegetables.";
+        explanation[3][0]="What it does: Needed for bone growth and strength, blood clotting, muscle contraction, and more";
+        explanation[3][1]="Foods that have it: Milk, fortified nondairy alternatives like soy milk, yogurt, hard cheeses, fortified cereals, kale";
+        explanation[4][0]="What it does: Cells need it to work normally. Helps make energy. Needed for bone growth.";
+        explanation[4][1]="Foods that have it: Milk and other dairy products, peas, meat, eggs, some cereals and breads";
+        explanation[5][0]="Helps with heart rhythm, muscle and nerve function, bone strength";
+        explanation[5][1]="Foods that have it: Green leafy vegetables, nuts, dairy, soybeans, potatoes, whole wheat, quinoa";
+        explanation[6][0]="What it does: Needed for red blood cells and many enzymes";
+        explanation[6][1]="Foods that have it: Fortified cereals, beans, lentils, beef, turkey (dark meat), soy beans, spinach";
+        explanation[7][0]="What it does: Prevents cavities in teeth, helps with bone growth";
+        explanation[7][1]="Foods that have it: Fluoridated water, some sea fish";
+        explanation[8][0]="What it does: Supports your immune system and nerve function. Also important for reproduction.";
+        explanation[8][1]="Foods that have it: Red meats, some seafood, fortified cereals";
+        explanation[9][0]="What it does: Protects cells from damage. Helps manage thyroid hormone.";
+        explanation[9][1]="Foods that have it: Organ meats, seafood, dairy, some plants (if grown in soil with selenium), Brazil nuts";
+
+        return explanation;
+    }
+    }
