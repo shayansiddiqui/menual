@@ -50,28 +50,33 @@ public class TextSelection extends AppCompatActivity {
         apiInterface = RetrofitInstance.getRetrofitInstance().create(ApiInterface.class);
 
         Bundle extras = getIntent().getExtras();
-        String filename = (String) extras.get(Constants.DETECTION_RESPONSE_KEY);
+        String searchedMeal = extras.get(Constants.SEARCH_QUERY).toString();
+        GetNutritionTask getNutritionTask = new GetNutritionTask();
+        if(!searchedMeal.isEmpty()){
+            getNutritionTask.execute(searchedMeal);
+        } else {
+            String filename = (String) extras.get(Constants.DETECTION_RESPONSE_KEY);
 
-        StringBuffer fileContent = new StringBuffer();
-        byte[] buffer = new byte[1024];
-        int n;
-        try {
-            FileInputStream fis = TextSelection.this.openFileInput(filename);
-            while ((n = fis.read(buffer)) != -1) {
-                fileContent.append(new String(buffer, 0, n));
+            StringBuffer fileContent = new StringBuffer();
+            byte[] buffer = new byte[1024];
+            int n;
+            try {
+                FileInputStream fis = TextSelection.this.openFileInput(filename);
+                while ((n = fis.read(buffer)) != -1) {
+                    fileContent.append(new String(buffer, 0, n));
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        JsonElement element = new JsonParser().parse(fileContent.toString());
-        String[] dishes = fetchBlocks(element);
+            JsonElement element = new JsonParser().parse(fileContent.toString());
+            String[] dishes = fetchBlocks(element);
 //        List<FoodItem> foodItems = new ArrayList<>();
 //        foodItems.add(FoodItem.getMockFoodItem());
 //        showList(foodItems);
-        GetNutritionTask getNutritionTask =new GetNutritionTask();
-        getNutritionTask.execute(dishes);
+            getNutritionTask.execute(dishes);
+        }
     }
 
     private void showList(final List<FoodItem> foodItems) {
