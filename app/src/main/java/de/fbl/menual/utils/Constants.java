@@ -8,4 +8,7 @@ public class Constants {
     public static final String CHANNEL_ID = "channel_1";
     public static final String CHANNEL_NAME = "channel_name_1";
     public static final String CHANNEL_DESCRIPTION = "channel_description_1";
+    public static final String SEARCH_QUERY = "search_query";
+    public static final String QUERY_RESPONSE = "query_response";
+    public static final String HISTORY_PRESELECT = "query_response";
 }

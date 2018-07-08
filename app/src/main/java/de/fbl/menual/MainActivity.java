@@ -1,6 +1,7 @@
 package de.fbl.menual;
 
 import android.app.ProgressDialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -18,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.SearchView;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -83,6 +85,8 @@ public class MainActivity extends AppCompatActivity {
                 setMealType(3);
             }
         });
+        startService(new Intent(MainActivity.this, NotificationService.class));
+
 
         startService(new Intent(MainActivity.this, NotificationService.class));
 
@@ -109,6 +113,20 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager =
+               (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView =
+                (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
+
+
+       // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+         //   searchView.getSuggestionsAdapter().setDropDownViewTheme(this.getTheme());
+       // }
+
         return true;
     }
 
@@ -130,10 +148,18 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+         if (id == R.id.action_recommendations) {
+           Intent myIntent = new Intent(MainActivity.this, PlaneTextTabActivity.class);
+           MainActivity.this.startActivity(myIntent);
+           return true;
+         }
+
+       // SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
+         //       HelloSuggestionProvider.AUTHORITY, HelloSuggestionProvider.MODE);
+        //suggestions.clearHistory();
+
         if (id == R.id.action_diet_preferences) {
-            Intent myIntent = new Intent(MainActivity.this, DietPreferences.class);
-//            myIntent.putExtra("key", value); //Optional parameters
+            Intent myIntent = new Intent(MainActivity.this, DietPreferencesActivity.class);
             MainActivity.this.startActivity(myIntent);
             return true;
         }
@@ -239,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         private void showResponse(File previewImageFile) {
-            Intent myIntent = new Intent(MainActivity.this, TextSelection.class);
+            Intent myIntent = new Intent(MainActivity.this, TextSelectionActivity.class);
             myIntent.putExtra(Constants.PREVIEW_IMAGE_KEY, previewImageFile); //Optional parameters
             myIntent.putExtra(Constants.DETECTION_RESPONSE_KEY, Config.PREVIEW_RESPONSE_FILE_NAME); //Optional parameters
             myIntent.putExtra(Constants.MEAL_TYPE_KEY, getMealType());

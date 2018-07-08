@@ -498,4 +498,23 @@ public class Evaluator {
 
         return explanation;
     }
+    public static String getMacroExplanation(int mealtime) //for indexes 8-11
+    {
+        int[][] mahlzeitL = {{25, 20, 25, 30}, {30, 35, 30, 30}, {25, 30, 25, 25}, {10, 10, 10, 10}}; //erster Identifier: Frühstück, Mitagessen, Abendessen, Snack. Zweiter Identifier: Energie,Proteine,Fett,KH
+//laut der DGE sollte eine Mahlzeit 10% Zucker am Kalorienanteil nicht überschreiten
+        String[] mealtypeL = {"Breakfast", "Lunch", "Dinner", "Snack"};
+        return ("The optimal " + mealtypeL[mealtime] + " should only consist of a maximum proportion of " + mahlzeitL[mealtime][2] + "% fat and at most " + mahlzeitL[mealtime][3] + "% carbohydrates!");
+    }
+    public static String getFatExplanation() //for indexes 12-15
+    {
+        return "Types of Fat:\n\n" +
+                "Saturated fats: Saturated fats raise your LDL (bad) cholesterol level. High LDL cholesterol puts you at risk for heart attack, stroke, and other major health problems. You should avoid or limit foods that are high in saturated fats.\n" +
+                "\n" +
+
+                "Trans fats: Trans fats can raise LDL cholesterol levels in your blood. They can also lower your HDL (good) cholesterol levels. Foods with a lot of saturated fats are animal products, such as butter, cheese, whole milk, ice cream, cream, and fatty meats.\n" +
+                "\n" + "Unsaturated Fats: Eating unsaturated fats instead of saturated fats can help lower your LDL cholesterol. Most vegetable oils that are liquid at room temperature have unsaturated fats. There are two kinds of unsaturated fats:" +
+                "\n" +
+                "Mono-unsaturated fats: Includes olive and canola oil\n" +
+                "Polyunsaturated fats: Includes safflower, sunflower, corn, and soy oil\n";
+                }
     }

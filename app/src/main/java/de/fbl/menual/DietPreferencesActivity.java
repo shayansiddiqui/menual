@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 import de.fbl.menual.adapters.PreferenceAdapter;
 
-public class DietPreferences extends AppCompatActivity {
+public class DietPreferencesActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

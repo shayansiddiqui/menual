@@ -2,15 +2,23 @@ package de.fbl.menual;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.google.gson.JsonElement;
@@ -25,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 
 import de.fbl.menual.adapters.FoodListAdapter;
-import de.fbl.menual.adapters.PreferenceAdapter;
 import de.fbl.menual.api.ApiInterface;
 import de.fbl.menual.api.RetrofitInstance;
 import de.fbl.menual.models.FoodItem;
@@ -35,47 +42,57 @@ import de.fbl.menual.utils.EvaluatorUtils;
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class TextSelection extends AppCompatActivity {
+public class TextSelectionActivity extends AppCompatActivity {
 
     private ApiInterface apiInterface;
     private ProgressDialog mDialog;
+    private boolean isFromSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_text_selection);
 
-        mDialog = ProgressDialog.show(TextSelection.this, "In progress", "Getting nutrition info...", true);
+        mDialog = ProgressDialog.show(TextSelectionActivity.this, "In progress", "Getting nutrition info...", true);
 
         apiInterface = RetrofitInstance.getRetrofitInstance().create(ApiInterface.class);
 
         Bundle extras = getIntent().getExtras();
-        String filename = (String) extras.get(Constants.DETECTION_RESPONSE_KEY);
+        String searchedMeal = extras.get(Constants.SEARCH_QUERY).toString();
+        GetNutritionTask getNutritionTask = new GetNutritionTask();
+        if(!searchedMeal.isEmpty()){
+            isFromSearch = true;
+            getNutritionTask.execute(searchedMeal);
+        } else {
+            isFromSearch = false;
+            String filename = (String) extras.get(Constants.DETECTION_RESPONSE_KEY);
 
-        StringBuffer fileContent = new StringBuffer();
-        byte[] buffer = new byte[1024];
-        int n;
-        try {
-            FileInputStream fis = TextSelection.this.openFileInput(filename);
-            while ((n = fis.read(buffer)) != -1) {
-                fileContent.append(new String(buffer, 0, n));
+            StringBuffer fileContent = new StringBuffer();
+            byte[] buffer = new byte[1024];
+            int n;
+            try {
+                FileInputStream fis = TextSelectionActivity.this.openFileInput(filename);
+                while ((n = fis.read(buffer)) != -1) {
+                    fileContent.append(new String(buffer, 0, n));
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        JsonElement element = new JsonParser().parse(fileContent.toString());
-        String[] dishes = fetchBlocks(element);
+            JsonElement element = new JsonParser().parse(fileContent.toString());
+            String[] dishes = fetchBlocks(element);
 //        List<FoodItem> foodItems = new ArrayList<>();
 //        foodItems.add(FoodItem.getMockFoodItem());
 //        showList(foodItems);
-        GetNutritionTask getNutritionTask =new GetNutritionTask();
-        getNutritionTask.execute(dishes);
+            getNutritionTask.execute(dishes);
+        }
+
+
     }
 
     private void showList(final List<FoodItem> foodItems) {
-        FoodListAdapter adapter = new FoodListAdapter(foodItems, TextSelection.this);
+        FoodListAdapter adapter = new FoodListAdapter(foodItems, TextSelectionActivity.this);
         //handle listview and assign adapter
         ListView lView = (ListView) findViewById(R.id.food_list);
         lView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -148,8 +165,8 @@ public class TextSelection extends AppCompatActivity {
         String result = foodItem.getResult();
         Map<String, String> comments = foodItem.getComments();
 
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(TextSelection.this);
-        LayoutInflater factory = LayoutInflater.from(TextSelection.this);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(TextSelectionActivity.this);
+        LayoutInflater factory = LayoutInflater.from(TextSelectionActivity.this);
         final View view = factory.inflate(R.layout.food_result, null);
         ImageView foodResultIcon = view.findViewById(R.id.food_result_icon);
 
@@ -198,4 +215,5 @@ public class TextSelection extends AppCompatActivity {
         alertDialogBuilder.show();
 
     }
+
 }
