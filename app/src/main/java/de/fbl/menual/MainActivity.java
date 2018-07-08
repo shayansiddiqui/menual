@@ -31,6 +31,7 @@ import de.fbl.menual.utils.CameraPreview;
 import de.fbl.menual.utils.Config;
 import de.fbl.menual.utils.Constants;
 import de.fbl.menual.utils.FileUtils;
+import de.fbl.menual.Services.NotificationService;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -82,6 +83,9 @@ public class MainActivity extends AppCompatActivity {
                 setMealType(3);
             }
         });
+
+        startService(new Intent(MainActivity.this, NotificationService.class));
+
 
         // Create an instance of Camera
         mCamera = getCameraInstance();
@@ -265,4 +269,5 @@ public class MainActivity extends AppCompatActivity {
     private int getMealType(){
         return mealType;
     }
+
 }
