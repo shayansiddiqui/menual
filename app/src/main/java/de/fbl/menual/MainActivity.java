@@ -4,13 +4,10 @@ import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.hardware.Camera;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -159,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
         //suggestions.clearHistory();
 
         if (id == R.id.action_diet_preferences) {
-            Intent myIntent = new Intent(MainActivity.this, DietPreferences.class);
+            Intent myIntent = new Intent(MainActivity.this, DietPreferencesActivity.class);
             MainActivity.this.startActivity(myIntent);
             return true;
         }
@@ -265,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         private void showResponse(File previewImageFile) {
-            Intent myIntent = new Intent(MainActivity.this, TextSelection.class);
+            Intent myIntent = new Intent(MainActivity.this, TextSelectionActivity.class);
             myIntent.putExtra(Constants.PREVIEW_IMAGE_KEY, previewImageFile); //Optional parameters
             myIntent.putExtra(Constants.DETECTION_RESPONSE_KEY, Config.PREVIEW_RESPONSE_FILE_NAME); //Optional parameters
             myIntent.putExtra(Constants.MEAL_TYPE_KEY, getMealType());

@@ -30,7 +30,7 @@ public class SearchableActivity extends AppCompatActivity {
                     SuggestionsProvider.AUTHORITY, SuggestionsProvider.MODE);
             suggestions.saveRecentQuery(query, null);
 
-            Intent myIntent = new Intent(getApplicationContext(), TextSelection.class);
+            Intent myIntent = new Intent(getApplicationContext(), TextSelectionActivity.class);
             myIntent.putExtra(Constants.SEARCH_QUERY, query);
             getApplicationContext().startActivity(myIntent);
         }

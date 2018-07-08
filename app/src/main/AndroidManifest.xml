@@ -50,7 +50,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DietPreferences"
+            android:name=".DietPreferencesActivity"
             android:label="@string/title_activity_diet_preferences"
             android:parentActivityName=".MainActivity">
             <meta-data
@@ -58,7 +58,7 @@
                 android:value=".MainActivity" />
         </activity>
         <activity
-            android:name=".TextSelection"
+            android:name=".TextSelectionActivity"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
