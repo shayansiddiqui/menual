@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
@@ -72,4 +71,6 @@ public class PreferenceAdapter extends BaseAdapter implements ListAdapter {
 
         return view;
     }
+
+
 }
