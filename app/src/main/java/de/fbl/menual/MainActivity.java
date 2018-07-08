@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.hardware.Camera;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -24,16 +23,15 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import de.fbl.menual.api.ApiInterface;
 import de.fbl.menual.api.RetrofitInstance;
-import de.fbl.menual.tasks.TextDetectionTask;
 import de.fbl.menual.utils.CameraPreview;
 import de.fbl.menual.utils.Config;
 import de.fbl.menual.utils.Constants;
 import de.fbl.menual.utils.FileUtils;
+import de.fbl.menual.Services.NotificationService;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -85,6 +83,9 @@ public class MainActivity extends AppCompatActivity {
                 setMealType(3);
             }
         });
+
+        startService(new Intent(MainActivity.this, NotificationService.class));
+
 
         // Create an instance of Camera
         mCamera = getCameraInstance();
@@ -268,4 +269,5 @@ public class MainActivity extends AppCompatActivity {
     private int getMealType(){
         return mealType;
     }
+
 }
