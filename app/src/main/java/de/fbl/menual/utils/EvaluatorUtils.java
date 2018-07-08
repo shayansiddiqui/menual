@@ -121,7 +121,7 @@ public class EvaluatorUtils {
                         }
 
                     }
-                    return new FoodItem(foodQuery,result, comments);
+                    return new FoodItem(foodQuery,result, comments, lowResPhoto, highResPhoto, statisticText, staticsValues);
                 }
             }
         }

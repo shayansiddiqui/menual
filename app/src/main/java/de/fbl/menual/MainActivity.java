@@ -88,6 +88,9 @@ public class MainActivity extends AppCompatActivity {
         startService(new Intent(MainActivity.this, NotificationService.class));
 
 
+        startService(new Intent(MainActivity.this, NotificationService.class));
+
+
         // Create an instance of Camera
         mCamera = getCameraInstance();
 

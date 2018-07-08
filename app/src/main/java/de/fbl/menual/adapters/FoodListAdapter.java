@@ -3,6 +3,9 @@ package de.fbl.menual.adapters;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +14,9 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -57,29 +63,70 @@ public class FoodListAdapter extends BaseAdapter implements ListAdapter {
         TextView listItemText = (TextView) view.findViewById(R.id.food_item_string);
         FoodItem foodItem = list.get(position);
         int color = R.color.yellow;
-        int background = R.drawable.yellow;
+//        int background = R.drawable.yellow;
 
         listItemText.setText(foodItem.getFoodName());
         String result = foodItem.getResult();
+        ImageView foodItemImage = (ImageView) view.findViewById(R.id.food_item_image);
+        new ImageLoadTask(foodItem.getLowResPhoto(), foodItemImage).execute();
+
         switch (result) {
             case "green":
-                background = R.drawable.green;
+//                background = R.drawable.green;
                 color = R.color.green;
                 break;
             case "red":
-                background = R.drawable.red;
+//                background = R.drawable.red;
                 color = R.color.red;
                 break;
             case "yellow":
-                background = R.drawable.yellow;
+//                background = R.drawable.yellow;
                 color = R.color.yellow;
                 break;
         }
-        ImageView listItemIcon = (ImageView) view.findViewById(R.id.food_item_result_icon);
+//        ImageView listItemIcon = (ImageView) view.findViewById(R.id.food_item_result_icon);
         listItemText.setTextColor(context.getResources().getColor(color));
-        listItemIcon.setBackgroundResource(background);
+//        listItemIcon.setBackgroundResource(background);
 
 
         return view;
+    }
+
+    private class ImageLoadTask extends AsyncTask<Void, Void, Bitmap> {
+
+        private String url;
+        private ImageView imageView;
+
+        ImageLoadTask(String url, ImageView imageView) {
+            this.url = url;
+            this.imageView = imageView;
+        }
+
+        @Override
+        protected Bitmap doInBackground(Void... params) {
+            try {
+                if(url==null || url.isEmpty()){
+                    url = "https://d2eawub7utcl6.cloudfront.net/images/nix-apple-grey.png";
+                }
+
+                URL urlConnection = new URL(url);
+                HttpURLConnection connection = (HttpURLConnection) urlConnection
+                        .openConnection();
+                connection.setDoInput(true);
+                connection.connect();
+                InputStream input = connection.getInputStream();
+                Bitmap myBitmap = BitmapFactory.decodeStream(input);
+                return myBitmap;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            imageView.setImageBitmap(result);
+        }
+
     }
 }
