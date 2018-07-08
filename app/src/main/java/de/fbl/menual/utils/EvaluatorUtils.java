@@ -23,6 +23,11 @@ public class EvaluatorUtils {
                 {
                     System.out.println(response.body().toString());
                     String sApiValues = response.body().toString();
+                    String lowResPhoto = getLowResPhoto(sApiValues); //lowRes http Photo image
+                    String highResPhoto = getHighResPhoto(sApiValues); //high res http Photo image
+                    System.out.println("LowRes: " +lowResPhoto);
+                    System.out.println("HighRes: " +highResPhoto);
+
 
                     //if(sApiValues.contains(foodName)) {
                     double[] apiValues = new double[34];
@@ -233,6 +238,61 @@ public class EvaluatorUtils {
         comments.put("comment2", comment2);
 
         return comments;
+
+    }
+    public static String getLowResPhoto(String response)
+    {
+        String localResponse = "";
+        String link = "";
+        for(int i = 0; i<response.length();i++)
+        {
+            localResponse += response.charAt(i);
+        }
+        if(localResponse.contains("photo\":{\"thumb") && localResponse.contains("http"))
+        {
+            int index = localResponse.indexOf("photo\":{\"thumb");
+            if(localResponse.substring(index+17)!=null) {
+
+
+                link = localResponse.substring(index + 17);
+
+                for (int i = 0; i < link.length(); i++) {
+                    if (link.charAt(i) == '"') {
+                        link = link.substring(0, i);
+                        i = link.length(); //break loop
+                    }
+                }
+            }
+        }
+        return link;
+
+    }
+    public static String getHighResPhoto(String response)
+    {
+        String localResponse = "";
+        String link = "";
+        for(int i = 0; i<response.length();i++)
+        {
+            localResponse += response.charAt(i);
+        }
+        if(localResponse.contains("highres\":\"") && localResponse.contains("http"))
+
+        {
+            int index = localResponse.indexOf("highres\":\"");
+            if(localResponse.substring(index+10)!=null) {
+
+
+                link = localResponse.substring(index + 10);
+
+                for (int i = 0; i < link.length(); i++) {
+                    if (link.charAt(i) == '"') {
+                        link = link.substring(0, i);
+                        i = link.length(); //break loop
+                    }
+                }
+            }
+        }
+        return link;
 
     }
 
