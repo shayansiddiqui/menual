@@ -6,5 +6,10 @@
     <color name="green">#9ef442</color>
     <color name="red">#ef2d2d</color>
     <color name="yellow">#ffd42b</color>
+<<<<<<< HEAD
     <color name="white">#ffffff</color>
+=======
+    <color name="colorTextPrimary">#ffffff</color>
+    <color name="colorTextDisable">#D3D3D3</color>
+>>>>>>> ScanHistory_feature
 </resources>

@@ -193,7 +193,7 @@ public class EvaluatorUtils {
                         int[][] mahlzeit = e.getMahlzeit();
                         int mealtime = 1; //Has to be replaced with actual mealtime
                         String[] mealtype = {"breakfast", "lunch", "dinner", "snack"};
-                        comment1 = ("The optimal " + mealtype[mealtime] + " should only consist of a maximum proportion of " + mahlzeit[mealtime][3] + "% fat and at most " + mahlzeit[mealtime][4] + "% carbohydrates!");
+                        comment1 = ("The optimal " + mealtype[mealtime] + " should only consist of a maximum proportion of " + mahlzeit[mealtime][2] + "% fat and at most " + mahlzeit[mealtime][3] + "% carbohydrates!");
                     }
                 }
             }

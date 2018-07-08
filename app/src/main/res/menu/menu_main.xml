@@ -3,17 +3,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="de.fbl.menual.MainActivity">
     <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search"
+        android:orderInCategory="100"
+        android:title="Search"
+        app:actionViewClass="android.widget.SearchView"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/action_recommendations"
+        android:icon="@drawable/ic_recommendations"
         android:orderInCategory="100"
         android:title="@string/action_recommendations"
-        android:icon="@drawable/ic_recommendations"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_diet_preferences"
         android:orderInCategory="100"
-        android:title="@string/action_diet_preferences"
-        android:icon="@drawable/ic_profile"
-        app:showAsAction="always" />
+        android:title="@string/title_activity_diet_preferences"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_account"
         android:orderInCategory="100"
@@ -23,5 +29,10 @@
         android:id="@+id/action_logout"
         android:orderInCategory="100"
         android:title="@string/action_logout"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_clear_history"
+        android:orderInCategory="100"
+        android:title="@string/action_clear_history"
         app:showAsAction="never" />
 </menu>
