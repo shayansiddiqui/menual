@@ -10,6 +10,9 @@
     <string name="title_activity_login">Sign in</string>
     <string name="action_clear_history">Clear History</string>
     <string name="title_hints">Search database</string>
+    <string name="suggestions_tab"></string>
+    <string name="history_tab"></string>
+    <string name="title_activity_tab">Interests</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>

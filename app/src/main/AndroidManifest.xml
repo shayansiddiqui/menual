@@ -66,6 +66,14 @@
                 android:value=".MainActivity" />
         </activity>
         <activity
+            android:name=".PlaneTextTabActivity"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:label="@string/title_activity_tab"
+                android:value=".MainActivity" />
+        </activity>
+        <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login">
 

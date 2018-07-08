@@ -88,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
                 setMealType(3);
             }
         });
-
         startService(new Intent(MainActivity.this, NotificationService.class));
 
 
@@ -149,11 +148,11 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-         //if (id == R.id.action_search) {
-         //  Intent myIntent = new Intent(MainActivity.this, SearchableActivity.class);
-         //  MainActivity.this.startActivity(myIntent);
-          // return true;
-        // }
+         if (id == R.id.action_recommendations) {
+           Intent myIntent = new Intent(MainActivity.this, PlaneTextTabActivity.class);
+           MainActivity.this.startActivity(myIntent);
+           return true;
+         }
 
        // SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
          //       HelloSuggestionProvider.AUTHORITY, HelloSuggestionProvider.MODE);

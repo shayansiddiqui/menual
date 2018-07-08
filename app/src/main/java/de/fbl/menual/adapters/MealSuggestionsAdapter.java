@@ -1,4 +1,4 @@
-/**package de.fbl.menual.adapters;
+package de.fbl.menual.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -11,18 +11,18 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import de.fbl.menual.R;
-import it.beppi.tristatetogglebutton_library.TriStateToggleButton;
 
-public class SuggestionsAdapter extends BaseAdapter implements ListAdapter {
+public class MealSuggestionsAdapter extends BaseAdapter implements ListAdapter {
 
     private ArrayList<String> list = new ArrayList<String>();
     private Context context;
 
-
-    public SuggestionsAdapter(ArrayList<String> list, Context context) {
+    public MealSuggestionsAdapter(ArrayList<String> list, Context context) {
         this.list = list;
         this.context = context;
     }
+
+
 
     @Override
     public int getCount() {
@@ -30,34 +30,28 @@ public class SuggestionsAdapter extends BaseAdapter implements ListAdapter {
     }
 
     @Override
-    public Object getItem(int pos) {
-        return list.get(pos);
+    public Object getItem(int i) {
+        return list.get(i);
     }
 
     @Override
-    public long getItemId(int pos) {
+    public long getItemId(int i) {
         return 0;
-        //just return 0 if your list items do not have an Id variable.
     }
 
-    /
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         View view = convertView;
         if (view == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.preference, null);
+            view = inflater.inflate(R.layout.suggestions, null);
         }
 
         //Handle TextView and display string from your list
         TextView listItemText = (TextView) view.findViewById(R.id.list_item_string);
         listItemText.setText(list.get(position));
 
-        //Handle buttons and add onClickListeners
-        TriStateToggleButton prefSwitch = (TriStateToggleButton) view.findViewById(R.id.preference_switch);
-
         return view;
-    }
 
+    }
 }
- */
