@@ -7,11 +7,27 @@ public class FoodItem {
     private String foodName;
     private String result;
     private Map<String, String> comments;
+    private String lowResPhoto;
+    private String highResPhoto;
+    String[] statisticText;
+    double[] staticsValues;
+
+
 
     public FoodItem(String foodName, String result, Map<String, String> comments) {
         this.foodName = foodName;
         this.result = result;
         this.comments = comments;
+    }
+
+    public FoodItem(String foodName, String result, Map<String, String> comments, String lowResPhoto, String highResPhoto, String[] statisticText, double[] staticsValues) {
+        this.foodName = foodName;
+        this.result = result;
+        this.comments = comments;
+        this.lowResPhoto = lowResPhoto;
+        this.highResPhoto = highResPhoto;
+        this.statisticText = statisticText;
+        this.staticsValues = staticsValues;
     }
 
     public String getFoodName() {
@@ -28,6 +44,39 @@ public class FoodItem {
 
     public void setResult(String result) {
         this.result = result;
+    }
+
+
+    public String getLowResPhoto() {
+        return lowResPhoto;
+    }
+
+    public void setLowResPhoto(String lowResPhoto) {
+        this.lowResPhoto = lowResPhoto;
+    }
+
+    public String getHighResPhoto() {
+        return highResPhoto;
+    }
+
+    public void setHighResPhoto(String highResPhoto) {
+        this.highResPhoto = highResPhoto;
+    }
+
+    public String[] getStatisticText() {
+        return statisticText;
+    }
+
+    public void setStatisticText(String[] statisticText) {
+        this.statisticText = statisticText;
+    }
+
+    public double[] getStaticsValues() {
+        return staticsValues;
+    }
+
+    public void setStaticsValues(double[] staticsValues) {
+        this.staticsValues = staticsValues;
     }
 
     public Map<String, String> getComments() {
