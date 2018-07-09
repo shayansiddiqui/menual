@@ -10,9 +10,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
-import android.widget.RemoteViews;
+import de.fbl.menual.DietPreferencesActivity;
 
-import de.fbl.menual.DietPreferences;
 import de.fbl.menual.R;
 import de.fbl.menual.utils.Constants;
 
@@ -23,7 +22,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     }
 
     public void notifiy(Context context) {
-        Intent intent = new Intent(context, DietPreferences.class);
+        Intent intent = new Intent(context, DietPreferencesActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         createNotificationChannel(context);

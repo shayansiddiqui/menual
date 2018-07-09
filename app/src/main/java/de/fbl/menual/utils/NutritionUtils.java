@@ -9,7 +9,7 @@ import com.google.gson.JsonParser;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-//import de.fbl.menual.ScanHistory;
+//import de.fbl.menual.PlaneTextTabActivity;
 import de.fbl.menual.api.ApiInterface;
 import de.fbl.menual.api.RetrofitInstance;
 import retrofit2.Call;

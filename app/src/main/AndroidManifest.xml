@@ -34,6 +34,12 @@
 
         <receiver android:name=".Receivers.AlarmReceiver"/>
 
+        <provider android:name=".utils.SuggestionsProvider"
+            android:authorities="de.fbl.menual.utils.SuggestionsProvider" />
+
+        <meta-data android:name="android.app.default_searchable"
+            android:value=".SearchableActivity" />
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -44,7 +50,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DietPreferences"
+            android:name=".DietPreferencesActivity"
             android:label="@string/title_activity_diet_preferences"
             android:parentActivityName=".MainActivity">
             <meta-data
@@ -52,11 +58,19 @@
                 android:value=".MainActivity" />
         </activity>
         <activity
-            android:name=".TextSelection"
+            android:name=".TextSelectionActivity"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:label="@string/title_activity_text_selection"
+                android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".PlaneTextTabActivity"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:label="@string/title_activity_tab"
                 android:value=".MainActivity" />
         </activity>
         <activity
@@ -72,6 +86,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:label="@string/title_activity_statistics"
                 android:value=".TextSelection" />
+        </activity>
+
+        <activity android:name=".SearchableActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
         </activity>
     </application>
 
