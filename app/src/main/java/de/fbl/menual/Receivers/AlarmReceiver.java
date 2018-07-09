@@ -18,6 +18,7 @@ import de.fbl.menual.utils.Constants;
 public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
+
         notifiy(context);
     }
 

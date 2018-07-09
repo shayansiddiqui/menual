@@ -57,61 +57,39 @@ public class TextSelectionActivity extends AppCompatActivity {
         mDialog = ProgressDialog.show(TextSelectionActivity.this, "In progress", "Getting nutrition info...", true);
 
         apiInterface = RetrofitInstance.getRetrofitInstance().create(ApiInterface.class);
-
-        Bundle extras = getIntent().getExtras();
-        if(extras!=null){
-            String filename = (String) extras.get(Constants.DETECTION_RESPONSE_KEY);
-        String searchedMeal = extras.get(Constants.SEARCH_QUERY).toString();
         GetNutritionTask getNutritionTask = new GetNutritionTask();
-        if(!searchedMeal.isEmpty()){
-            isFromSearch = true;
-            getNutritionTask.execute(searchedMeal);
-        } else {
-            isFromSearch = false;
+        Bundle extras = getIntent().getExtras();
+        if(extras!=null) {
             String filename = (String) extras.get(Constants.DETECTION_RESPONSE_KEY);
+            String searchedMeal = extras.get(Constants.SEARCH_QUERY).toString();
 
-            StringBuffer fileContent = new StringBuffer();
-            byte[] buffer = new byte[1024];
-            int n;
-            try {
-                FileInputStream fis = TextSelection.this.openFileInput(filename);
-                while ((n = fis.read(buffer)) != -1) {
-                    fileContent.append(new String(buffer, 0, n));
+            if(!searchedMeal.isEmpty()){
+                isFromSearch = true;
+                getNutritionTask.execute(searchedMeal);
+            } else {
+                isFromSearch = false;
+
+                StringBuffer fileContent = new StringBuffer();
+                byte[] buffer = new byte[1024];
+                int n;
+                try {
+                    FileInputStream fis = TextSelectionActivity.this.openFileInput(filename);
+                    while ((n = fis.read(buffer)) != -1) {
+                        fileContent.append(new String(buffer, 0, n));
+                    }
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+                JsonElement element = new JsonParser().parse(fileContent.toString());
+                String[] dishes = fetchBlocks(element);
+                //        foodItems.add(FoodItem.getMockFoodItem());
+                //        showList(foodItems);
+                getNutritionTask.execute(dishes);
             }
-            JsonElement element = new JsonParser().parse(fileContent.toString());
-            String[] dishes = fetchBlocks(element);
-            GetNutritionTask getNutritionTask =new GetNutritionTask();
-            getNutritionTask.execute(dishes);
+
         }
-
-            StringBuffer fileContent = new StringBuffer();
-            byte[] buffer = new byte[1024];
-            int n;
-            try {
-                FileInputStream fis = TextSelectionActivity.this.openFileInput(filename);
-                while ((n = fis.read(buffer)) != -1) {
-                    fileContent.append(new String(buffer, 0, n));
-                }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            JsonElement element = new JsonParser().parse(fileContent.toString());
-            String[] dishes = fetchBlocks(element);
-//        List<FoodItem> foodItems = new ArrayList<>();
-//        foodItems.add(FoodItem.getMockFoodItem());
-//        showList(foodItems);
-
-    }
-            getNutritionTask.execute(dishes);
-        }
-
 
     }
 
@@ -123,11 +101,11 @@ public class TextSelectionActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                Intent myIntent = new Intent(TextSelection.this, StatisticsActivity.class);
+                Intent myIntent = new Intent(TextSelectionActivity.this, StatisticsActivity.class);
                 myIntent.putExtra(Constants.FOOD_ITEM_KEY, foodItems.get(i)); //Optional parameters
 //                myIntent.putExtra(Constants.DETECTION_RESPONSE_KEY, Config.PREVIEW_RESPONSE_FILE_NAME); //Optional parameters
 //                myIntent.putExtra(Constants.MEAL_TYPE_KEY, getMealType());
-                TextSelection.this.startActivity(myIntent);
+                TextSelectionActivity.this.startActivity(myIntent);
 
 //                showResultAlert(foodItems.get(i));
             }
