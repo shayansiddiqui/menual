@@ -79,6 +79,15 @@
 
         </activity>
 
+        <activity
+            android:name=".StatisticsActivity"
+            android:parentActivityName=".TextSelection">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:label="@string/title_activity_statistics"
+                android:value=".TextSelection" />
+        </activity>
+
         <activity android:name=".SearchableActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
