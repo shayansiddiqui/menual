@@ -199,16 +199,9 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
-<<<<<<< HEAD
-        if (id == R.id.action_settings) {
-            Intent myIntent = new Intent(MainActivity.this, SettingsActivity.class);
-            MainActivity.this.startActivity(myIntent);
-            return true;
-=======
         if(id == R.id.action_logout){
              signOut();
              return true;
->>>>>>> a62afc363e4e4faa4648365918a2a2669134b5c4
         }
 
         return super.onOptionsItemSelected(item);

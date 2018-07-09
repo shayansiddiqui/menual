@@ -62,19 +62,6 @@
                 android:value=".MainActivity" />
         </activity>
         <activity
-            android:name=".ManualDietActivity"
-            android:label="@string/title_activity_diet_manual"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-            <intent-filter>
-                <action android:name="de.fbl.menual.ManualDietActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <activity
             android:name=".TextSelectionActivity"
             android:parentActivityName=".MainActivity">
             <meta-data
@@ -88,14 +75,6 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:label="@string/title_activity_tab"
-                android:value=".MainActivity" />
-        </activity>
-        <activity
-            android:name=".SettingsActivity"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:label="@string/title_activity_settings"
                 android:value=".MainActivity" />
         </activity>
         <activity
