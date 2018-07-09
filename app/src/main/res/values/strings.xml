@@ -15,9 +15,14 @@
     <string name="title_hints">Search database</string>
     <string name="history_tab"></string>
     <string name="title_activity_tab">Interests</string>
+<<<<<<< HEAD
     <string name="prefs_settings_header">Settings</string>
     <string name="prefs_account_header">Account</string>
     <string name="title_activity_diet_manual">Manual Selection</string>
+=======
+    <string name="title_stats_detailed">Detailed Statistics</string>
+    <string name="title_statistics">Statistics</string>
+>>>>>>> a62afc363e4e4faa4648365918a2a2669134b5c4
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>

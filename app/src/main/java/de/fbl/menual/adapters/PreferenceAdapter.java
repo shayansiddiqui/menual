@@ -1,6 +1,8 @@
 package de.fbl.menual.adapters;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +13,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import de.fbl.menual.R;
+import de.fbl.menual.utils.Config;
+import de.fbl.menual.utils.Constants;
 import it.beppi.tristatetogglebutton_library.TriStateToggleButton;
 
 public class PreferenceAdapter extends BaseAdapter implements ListAdapter {
@@ -18,10 +22,15 @@ public class PreferenceAdapter extends BaseAdapter implements ListAdapter {
     private ArrayList<String> list = new ArrayList<String>();
     private Context context;
 
+    SharedPreferences sharedPref;
+    SharedPreferences.Editor editor;
 
-    public PreferenceAdapter(ArrayList<String> list, Context context) {
+
+    public PreferenceAdapter(ArrayList<String> list, Context context, SharedPreferences sharedPref, SharedPreferences.Editor editor) {
         this.list = list;
         this.context = context;
+        this.sharedPref = sharedPref;
+        this.editor = editor;
     }
 
     @Override
@@ -53,22 +62,26 @@ public class PreferenceAdapter extends BaseAdapter implements ListAdapter {
         listItemText.setText(list.get(position));
 
         //Handle buttons and add onClickListeners
-        TriStateToggleButton prefSwitch = (TriStateToggleButton) view.findViewById(R.id.preference_switch);
+        final TriStateToggleButton prefSwitch = (TriStateToggleButton) view.findViewById(R.id.preference_switch);
+
 
         prefSwitch.setOnToggleChanged(new TriStateToggleButton.OnToggleChanged() {
             @Override
             public void onToggle(TriStateToggleButton.ToggleStatus toggleStatus, boolean booleanToggleStatus, int toggleIntValue) {
-                switch (toggleStatus) {
-                    case off:
-                        break;
-                    case mid:
-                        break;
-                    case on:
-                        break;
-                }
+                editor.putInt(Constants.prefArray[position], toggleIntValue);
+                editor.apply();
             }
         });
 
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //Do your switch stuff
+                prefSwitch.setToggleStatus(sharedPref.getInt(Constants.prefArray[position], 1));
+                notifyDataSetChanged();
+            }
+        }, 1000);
         return view;
     }
 

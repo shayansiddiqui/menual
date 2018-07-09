@@ -7,8 +7,12 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.hardware.Camera;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -19,12 +23,24 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.SearchView;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
 import java.util.List;
 
 import de.fbl.menual.api.ApiInterface;
@@ -47,66 +63,85 @@ public class MainActivity extends AppCompatActivity {
     private int rotation;
     private ApiInterface apiInterface;
     private int mealType;
+    private GoogleSignInAccount account;
+    private GoogleSignInClient mGoogleSignInClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        account = GoogleSignIn.getLastSignedInAccount(this);
+        mGoogleSignInClient = GoogleSignIn.getClient(this, new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build());
+        if(account==null){
+            Intent myIntent = new Intent(MainActivity.this, LoginActivity.class);
+            MainActivity.this.startActivity(myIntent);
+        }else{
+            setContentView(R.layout.activity_main);
+            Toolbar toolbar = findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mCamera.takePicture(null, null, mPicture);
+            FloatingActionButton fab = findViewById(R.id.fab);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mCamera.takePicture(null, null, mPicture);
+                }
+            });
+
+            Button button = findViewById(R.id.button);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    setMealType(1);
+                }
+            });
+
+            Button button1 = findViewById(R.id.button1);
+            button1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    setMealType(2);
+                }
+            });
+            Button button2 = findViewById(R.id.button2);
+            button2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    setMealType(3);
+                }
+            });
+            startService(new Intent(MainActivity.this, NotificationService.class));
+
+
+            startService(new Intent(MainActivity.this, NotificationService.class));
+
+
+            // Create an instance of Camera
+            mCamera = getCameraInstance();
+
+            Camera.Parameters params = mCamera.getParameters();
+            params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+
+            Camera.Size desiredSize = getPictureSize(params.getSupportedPictureSizes());
+            System.out.println(desiredSize.width);
+            params.setPictureSize(desiredSize.width, desiredSize.height);
+            mCamera.setParameters(params);
+
+            mPreview = new CameraPreview(this, mCamera);
+            FrameLayout preview = findViewById(R.id.camera_preview);
+            preview.addView(mPreview);
+            rotation = CameraPreview.correctCameraDisplayOrientation(MainActivity.this, mCamera);
+            apiInterface = RetrofitInstance.getRetrofitInstance().create(ApiInterface.class);
+
+            Bundle extras = getIntent().getExtras();
+            if(extras!=null){
+                Uri imgUri = account.getPhotoUrl();
+                new ImageLoadTask(imgUri, toolbar).execute();
             }
-        });
+        }
 
-        Button button = findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setMealType(1);
-            }
-        });
-
-        Button button1 = findViewById(R.id.button1);
-        button1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setMealType(2);
-            }
-        });
-        Button button2 = findViewById(R.id.button2);
-        button2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setMealType(3);
-            }
-        });
-        startService(new Intent(MainActivity.this, NotificationService.class));
-
-
-        startService(new Intent(MainActivity.this, NotificationService.class));
-
-
-        // Create an instance of Camera
-        mCamera = getCameraInstance();
-
-        Camera.Parameters params = mCamera.getParameters();
-        params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-
-        Camera.Size desiredSize = getPictureSize(params.getSupportedPictureSizes());
-        System.out.println(desiredSize.width);
-        params.setPictureSize(desiredSize.width, desiredSize.height);
-        mCamera.setParameters(params);
-
-        mPreview = new CameraPreview(this, mCamera);
-        FrameLayout preview = findViewById(R.id.camera_preview);
-        preview.addView(mPreview);
-        rotation = CameraPreview.correctCameraDisplayOrientation(MainActivity.this, mCamera);
-        apiInterface = RetrofitInstance.getRetrofitInstance().create(ApiInterface.class);
     }
 
     @Override
@@ -164,13 +199,30 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
+<<<<<<< HEAD
         if (id == R.id.action_settings) {
             Intent myIntent = new Intent(MainActivity.this, SettingsActivity.class);
             MainActivity.this.startActivity(myIntent);
             return true;
+=======
+        if(id == R.id.action_logout){
+             signOut();
+             return true;
+>>>>>>> a62afc363e4e4faa4648365918a2a2669134b5c4
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void signOut() {
+        mGoogleSignInClient.signOut()
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Intent myIntent = new Intent(MainActivity.this, LoginActivity.class);
+                        MainActivity.this.startActivity(myIntent);
+                    }
+                });
     }
 
     /**
@@ -251,28 +303,28 @@ public class MainActivity extends AppCompatActivity {
 
         private void doDetectionAPICall(String encoded) {
 
-//            JsonObject fakeResponse = new JsonParser().parse("{}").getAsJsonObject();
-//            endImageCapture(fakeResponse);
+            JsonObject fakeResponse = new JsonParser().parse("{}").getAsJsonObject();
+            endImageCapture(fakeResponse);
 
-            String jsonRequest = createDetectionAPIRequest(encoded);
-            Call<JsonObject> callTextDetection = apiInterface.detectText(jsonRequest);
-
-            callTextDetection.enqueue(new Callback<JsonObject>() {
-                @Override
-                public void onResponse(@NonNull Call<JsonObject> call, @NonNull Response<JsonObject> response) {
-                    if (newCacheFileNeeded) {
-                        FileUtils.createCacheFile(context, Config.CACHED_MENU_TO_USE + ".json");
-                        FileUtils.writeCacheResponseFile(context, response.body().toString().getBytes());
-                    }
-                    endImageCapture(response.body());
-                }
-
-                @Override
-                public void onFailure(Call<JsonObject> call, Throwable t) {
-                    System.out.print(t.getMessage());
-                    mDialog.dismiss();
-                }
-            });
+//            String jsonRequest = createDetectionAPIRequest(encoded);
+//            Call<JsonObject> callTextDetection = apiInterface.detectText(jsonRequest);
+//
+//            callTextDetection.enqueue(new Callback<JsonObject>() {
+//                @Override
+//                public void onResponse(@NonNull Call<JsonObject> call, @NonNull Response<JsonObject> response) {
+//                    if (newCacheFileNeeded) {
+//                        FileUtils.createCacheFile(context, Config.CACHED_MENU_TO_USE + ".json");
+//                        FileUtils.writeCacheResponseFile(context, response.body().toString().getBytes());
+//                    }
+//                    endImageCapture(response.body());
+//                }
+//
+//                @Override
+//                public void onFailure(Call<JsonObject> call, Throwable t) {
+//                    System.out.print(t.getMessage());
+//                    mDialog.dismiss();
+//                }
+//            });
         }
 
         private void showResponse(File previewImageFile) {
@@ -307,4 +359,37 @@ public class MainActivity extends AppCompatActivity {
         return mealType;
     }
 
+
+    private class ImageLoadTask extends AsyncTask<Void, Void, Bitmap> {
+
+        private Uri url;
+        private Toolbar toolbar;
+
+        ImageLoadTask(Uri url, Toolbar toolbar) {
+            this.url = url;
+            this.toolbar = toolbar;
+        }
+
+        @Override
+        protected Bitmap doInBackground(Void... params) {
+            try {
+                URL urlConnection = new URL(url.toString());
+                HttpURLConnection connection = (HttpURLConnection) urlConnection
+                        .openConnection();
+                connection.setDoInput(true);
+                connection.connect();
+                InputStream input = connection.getInputStream();
+                Bitmap myBitmap = BitmapFactory.decodeStream(input);
+                return myBitmap;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            toolbar.setOverflowIcon(new BitmapDrawable(getResources(), bitmap));
+        }
+    }
 }

@@ -1,7 +1,10 @@
 package de.fbl.menual;
 
+<<<<<<< HEAD
 import android.app.SearchManager;
 import android.content.Context;
+=======
+>>>>>>> a62afc363e4e4faa4648365918a2a2669134b5c4
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
@@ -12,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
@@ -30,6 +34,8 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.io.InputStream;
@@ -48,7 +54,11 @@ public class StatisticsActivity extends AppCompatActivity {
     int resultColor = R.color.yellow;
     double[] statistics = new double[0];
     String[] statisticsText = new String[0];
+<<<<<<< HEAD
     private FoodItem receivedFoodItem;
+=======
+    FoodItem foodItem;
+>>>>>>> a62afc363e4e4faa4648365918a2a2669134b5c4
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +66,11 @@ public class StatisticsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_statistics);
         Bundle extras = getIntent().getExtras();
         FoodItem foodItem = (FoodItem) extras.get(Constants.FOOD_ITEM_KEY);
+<<<<<<< HEAD
         receivedFoodItem = foodItem;
+=======
+        this.foodItem=foodItem;
+>>>>>>> a62afc363e4e4faa4648365918a2a2669134b5c4
 
         this.resultColor = getResultColor(foodItem.getResult());
         this.statistics = foodItem.getStaticsValues();
@@ -162,9 +176,9 @@ public class StatisticsActivity extends AppCompatActivity {
     private void initialzePieChart() {
         PieChart pieChart = (PieChart) findViewById(R.id.statistics_piechart);
         ArrayList<PieEntry> entries = new ArrayList<>();
-        entries.add(new PieEntry((float) statistics[8], statisticsText[10]));
+        entries.add(new PieEntry((float) statistics[8], statisticsText[8]));
         entries.add(new PieEntry((float) statistics[9], statisticsText[9]));
-        entries.add(new PieEntry((float) statistics[10], statisticsText[8]));
+        entries.add(new PieEntry((float) statistics[10], statisticsText[10]));
         PieDataSet dataSet = new PieDataSet(entries, "");
         dataSet.setValueTextSize(16);
         dataSet.setColors(ColorTemplate.JOYFUL_COLORS);
@@ -222,6 +236,19 @@ public class StatisticsActivity extends AppCompatActivity {
         horizontalBarChart.getAxisLeft().setAxisMinimum(0);
 
         horizontalBarChart.animateXY(1000, 1000);
+
+        horizontalBarChart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent myIntent = new Intent(StatisticsActivity.this, StatsDetailedActivity.class);
+                myIntent.putExtra(Constants.FOOD_ITEM_KEY, foodItem); //Optional parameters
+//                myIntent.putExtra(Constants.DETECTION_RESPONSE_KEY, Config.PREVIEW_RESPONSE_FILE_NAME); //Optional parameters
+//                myIntent.putExtra(Constants.MEAL_TYPE_KEY, getMealType());
+                StatisticsActivity.this.startActivity(myIntent);
+            }
+        });
+
+
         horizontalBarChart.invalidate();
         dataSet.setColors(getColorFromScore(statistics[2]), getColorFromScore(statistics[4]), getColorFromScore(statistics[3]), getColorFromScore(statistics[5]), getResources().getColor(R.color.other), getResources().getColor(R.color.other));
 

@@ -348,7 +348,7 @@ public class Evaluator {
         double[] mgVitamineL = {0.9, 20, 13, 65, 1.1, 1.3, 1.3, 1.3, 300, 6, 45, 3, 100};
         double[] mgMineralStoffeL = {1500, 2300, 4000, 1000, 700, 325, 13, 3.5, 8, 65};
 
-        double[] statistic = new double[40];
+        double[] statistic = new double[39];
         statistic[0] = mealtype; //Breakfast/lunch/diner
         statistic[1] = scores[0]; //total score
         for (int i = 2; i < 8; i++) //macroScore,Sugar Score, Fiber Score, Fat score, Vitamin Score, Minerals score in the same order
