@@ -9,12 +9,14 @@ import android.view.MenuItem;
 import de.fbl.menual.Fragments.HistoryFragment;
 import de.fbl.menual.Fragments.SuggestionsFragment;
 import de.fbl.menual.adapters.ViewPageAdapter;
+import de.fbl.menual.models.FoodItem;
 import de.fbl.menual.utils.Constants;
 
 public class PlaneTextTabActivity extends AppCompatActivity {
 
     private ViewPager viewPager;
     private TabLayout tabLayout;
+    private Bundle receivedBundle;
 
     SuggestionsFragment suggestionsFragment;
     HistoryFragment historyFragment;
@@ -28,14 +30,17 @@ public class PlaneTextTabActivity extends AppCompatActivity {
         viewPager.setOffscreenPageLimit(2);
         Bundle extras;
         try {
-            extras = getIntent().getExtras();
-            preselectedTab = (int) extras.get(Constants.HISTORY_PRESELECT);
+            receivedBundle = getIntent().getExtras();
+            preselectedTab = (int) receivedBundle.get(Constants.HISTORY_PRESELECT);
+            //receivedBundle = extras;
+            //foodItem = (FoodItem) extras.get(Constants.FOOD_ITEM_KEY);
         }catch (Exception ex){
             //Catch Exception
         }
         if(preselectedTab != 0){
             viewPager.setCurrentItem(1);
         }
+
         tabLayout = (TabLayout) findViewById(R.id.tablayout);
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -76,6 +81,9 @@ public class PlaneTextTabActivity extends AppCompatActivity {
       ViewPageAdapter adapter = new ViewPageAdapter(getSupportFragmentManager());
       suggestionsFragment=new SuggestionsFragment();
       historyFragment=new HistoryFragment();
+      if(!receivedBundle.equals(null)) {
+          historyFragment.setArguments(receivedBundle);
+      }
       adapter.addFragment(suggestionsFragment,"SUGGESTIONS");
       adapter.addFragment(historyFragment,"HISTORY");
       viewPager.setAdapter(adapter);

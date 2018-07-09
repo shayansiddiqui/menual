@@ -43,7 +43,7 @@ public class DietPreferenceFragment extends PreferenceFragment implements Shared
         CheckBoxPreference gainPref = ((CheckBoxPreference)this.findPreference("checkboxPref_gain"));
         CheckBoxPreference losePref = ((CheckBoxPreference)this.findPreference("checkboxPref_lose"));
         CheckBoxPreference maintainPref = ((CheckBoxPreference)this.findPreference("checkboxPref_maintain"));
-        if(key.equals("checkboxPref_gain")){
+        /*if(key.equals("checkboxPref_gain")){
             //gainPref.setChecked(true);
             losePref.setChecked(false);
             maintainPref.setChecked(false);
@@ -57,6 +57,6 @@ public class DietPreferenceFragment extends PreferenceFragment implements Shared
             losePref.setChecked(false);
             gainPref.setChecked(false);
         }
-
+*/
     }
 }
