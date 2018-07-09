@@ -10,12 +10,10 @@
         tools:context="de.fbl.menual.Fragment.SuggestionsFragment">
 
         <!-- TODO: Update blank fragment layout -->
-        <TextView
+        <ListView
+            android:id="@+id/suggestsion_list"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/suggestions_tab"
-            android:textSize="30sp" />
+            android:layout_height="wrap_content" />
 
     </RelativeLayout>
 

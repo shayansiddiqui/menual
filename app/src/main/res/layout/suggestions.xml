@@ -5,26 +5,40 @@
     android:layout_height="match_parent"
     android:padding="10dp">
 
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:orientation="vertical"
+        android:paddingLeft="8dp"
+        android:paddingStart="8dp">
+
+        <TextView
+            android:id="@+id/restaurant_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/kitchen_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000"
+            android:textSize="16sp" />
+    </LinearLayout>
+
     <TextView
-        android:id="@+id/history_list"
+        android:id="@+id/restaurant_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:paddingStart="8dp"
-        android:paddingLeft="8dp"
-        android:textSize="16sp"
-        android:textColor="#000"/>
-
-    <ImageView
-        android:id="@+id/food_item_result_icon"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
+        android:layout_marginEnd="5dp"
         android:layout_marginRight="5dp"
-        android:layout_marginEnd="5dp" />
+        android:textSize="16sp"/>
 
 </RelativeLayout>
