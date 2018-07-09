@@ -5,25 +5,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import de.fbl.menual.R;
-import de.fbl.menual.models.FoodItem;
+import de.fbl.menual.utils.Restaurant;
 
 public class MealSuggestionsAdapter extends BaseAdapter implements ListAdapter {
 
-    private ArrayList<String> list = new ArrayList<String>();
+    private ArrayList<Restaurant> list = new ArrayList<Restaurant>();
     private Context context;
 
-    public MealSuggestionsAdapter(ArrayList<String> list, Context context) {
+    public MealSuggestionsAdapter(ArrayList<Restaurant> list, Context context) {
         this.list = list;
         this.context = context;
     }
-
 
 
     @Override
@@ -49,35 +47,16 @@ public class MealSuggestionsAdapter extends BaseAdapter implements ListAdapter {
             view = inflater.inflate(R.layout.suggestions, null);
         }
 
-        //Handle TextView and display string from your list
-/*
-        TextView listItemText = (TextView) view.findViewById(R.id.history_list);
-        FoodItem foodItem = list.get(position);
-        listItemText.setText(list.get(position));
-        int color = R.color.yellow;
-        int background = R.drawable.yellow;
 
-        listItemText.setText(foodItem.getFoodName());
-        String result = foodItem.getResult();
-        switch (result) {
-            case "green":
-                background = R.drawable.green;
-                color = R.color.green;
-                break;
-            case "red":
-                background = R.drawable.red;
-                color = R.color.red;
-                break;
-            case "yellow":
-                background = R.drawable.yellow;
-                color = R.color.yellow;
-                break;
-        }
-        ImageView listItemIcon = (ImageView) view.findViewById(R.id.food_item_result_icon);
-        listItemText.setTextColor(context.getResources().getColor(color));
-        listItemIcon.setBackgroundResource(background);
-*/
+        Restaurant restaurant = list.get(position);
+        TextView restaurantName = (TextView) view.findViewById(R.id.restaurant_name);
+        restaurantName.setText(restaurant.getName());
 
+        TextView kitchenType = (TextView) view.findViewById(R.id.kitchen_type);
+        kitchenType.setText(restaurant.getKitchenType());
+
+        TextView restaurantLocation = (TextView) view.findViewById(R.id.restaurant_location);
+        restaurantLocation.setText(restaurant.getLocation());
 
         return view;
 

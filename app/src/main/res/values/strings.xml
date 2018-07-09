@@ -13,7 +13,6 @@
     <string name="title_activity_settings">Settings</string>
     <string name="action_clear_history">Clear History</string>
     <string name="title_hints">Search database</string>
-    <string name="suggestions_tab"></string>
     <string name="history_tab"></string>
     <string name="title_activity_tab">Interests</string>
 

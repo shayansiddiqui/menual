@@ -89,11 +89,11 @@
 
         <activity
             android:name=".StatisticsActivity"
-            android:parentActivityName=".TextSelection">
+            android:parentActivityName=".TextSelectionActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:label="@string/title_activity_statistics"
-                android:value=".TextSelection" />
+                android:value=".TextSelectionActivity" />
         </activity>
 
         <activity android:name=".SearchableActivity" >

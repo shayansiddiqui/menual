@@ -2,23 +2,17 @@ package de.fbl.menual;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.google.gson.JsonElement;
@@ -36,7 +30,6 @@ import de.fbl.menual.adapters.FoodListAdapter;
 import de.fbl.menual.api.ApiInterface;
 import de.fbl.menual.api.RetrofitInstance;
 import de.fbl.menual.models.FoodItem;
-import de.fbl.menual.utils.Config;
 import de.fbl.menual.utils.Constants;
 import de.fbl.menual.utils.DishRecognizer;
 import de.fbl.menual.utils.EvaluatorUtils;
@@ -48,6 +41,8 @@ public class TextSelectionActivity extends AppCompatActivity {
     private ApiInterface apiInterface;
     private ProgressDialog mDialog;
     private boolean isFromSearch;
+    String searchedMeal="";
+    ArrayList<FoodItem> foodItems=new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,60 +54,59 @@ public class TextSelectionActivity extends AppCompatActivity {
         apiInterface = RetrofitInstance.getRetrofitInstance().create(ApiInterface.class);
 
         Bundle extras = getIntent().getExtras();
-        if(extras!=null){
-            String filename = (String) extras.get(Constants.DETECTION_RESPONSE_KEY);
-        String searchedMeal = extras.get(Constants.SEARCH_QUERY).toString();
-        GetNutritionTask getNutritionTask = new GetNutritionTask();
-        if(!searchedMeal.isEmpty()){
-            isFromSearch = true;
-            getNutritionTask.execute(searchedMeal);
-        } else {
-            isFromSearch = false;
+        if (extras != null) {
             String filename = (String) extras.get(Constants.DETECTION_RESPONSE_KEY);
 
-            StringBuffer fileContent = new StringBuffer();
-            byte[] buffer = new byte[1024];
-            int n;
-            try {
-                FileInputStream fis = TextSelection.this.openFileInput(filename);
-                while ((n = fis.read(buffer)) != -1) {
-                    fileContent.append(new String(buffer, 0, n));
-                }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if(extras.get(Constants.SEARCH_QUERY)!=null){
+                searchedMeal = extras.get(Constants.SEARCH_QUERY).toString();
             }
-            JsonElement element = new JsonParser().parse(fileContent.toString());
-            String[] dishes = fetchBlocks(element);
-            GetNutritionTask getNutritionTask =new GetNutritionTask();
-            getNutritionTask.execute(dishes);
+            GetNutritionTask getNutritionTask = new GetNutritionTask();
+            if (!searchedMeal.isEmpty()) {
+                isFromSearch = true;
+//                showMockScreen();
+                getNutritionTask.execute(searchedMeal);
+            } else {
+                isFromSearch = false;
+                StringBuffer fileContent = new StringBuffer();
+                byte[] buffer = new byte[1024];
+                int n;
+                try {
+                    FileInputStream fis = TextSelectionActivity.this.openFileInput(filename);
+                    while ((n = fis.read(buffer)) != -1) {
+                        fileContent.append(new String(buffer, 0, n));
+                    }
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                JsonElement element = new JsonParser().parse(fileContent.toString());
+                String[] dishes = fetchBlocks(element);
+//                showMockScreen();
+                getNutritionTask.execute(dishes);
+            }
+
         }
-
-            StringBuffer fileContent = new StringBuffer();
-            byte[] buffer = new byte[1024];
-            int n;
-            try {
-                FileInputStream fis = TextSelectionActivity.this.openFileInput(filename);
-                while ((n = fis.read(buffer)) != -1) {
-                    fileContent.append(new String(buffer, 0, n));
-                }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            JsonElement element = new JsonParser().parse(fileContent.toString());
-            String[] dishes = fetchBlocks(element);
-//        List<FoodItem> foodItems = new ArrayList<>();
-//        foodItems.add(FoodItem.getMockFoodItem());
-//        showList(foodItems);
-
+        else{
+            foodItems = (ArrayList<FoodItem>) savedInstanceState.getSerializable("foodItems");
+            searchedMeal = savedInstanceState.getString("searchedMeal");
+            showList(foodItems);
+        }
     }
-            getNutritionTask.execute(dishes);
-        }
 
 
+    private void showMockScreen(){
+        List<FoodItem> foodItems = new ArrayList<>();
+        foodItems.add(FoodItem.getMockFoodItem());
+        showList(foodItems);
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("searchedMeal", searchedMeal);
+        outState.putSerializable("foodItems", foodItems);
     }
 
     private void showList(final List<FoodItem> foodItems) {
@@ -123,11 +117,11 @@ public class TextSelectionActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                Intent myIntent = new Intent(TextSelection.this, StatisticsActivity.class);
+                Intent myIntent = new Intent(TextSelectionActivity.this, StatisticsActivity.class);
                 myIntent.putExtra(Constants.FOOD_ITEM_KEY, foodItems.get(i)); //Optional parameters
 //                myIntent.putExtra(Constants.DETECTION_RESPONSE_KEY, Config.PREVIEW_RESPONSE_FILE_NAME); //Optional parameters
 //                myIntent.putExtra(Constants.MEAL_TYPE_KEY, getMealType());
-                TextSelection.this.startActivity(myIntent);
+                TextSelectionActivity.this.startActivity(myIntent);
 
 //                showResultAlert(foodItems.get(i));
             }
@@ -136,9 +130,9 @@ public class TextSelectionActivity extends AppCompatActivity {
         mDialog.dismiss();
     }
 
-    private class GetNutritionTask extends AsyncTask<String, Integer, List<FoodItem>> {
-        protected List<FoodItem> doInBackground(String... dishes) {
-            List<FoodItem> foodItems = new ArrayList<>();
+    private class GetNutritionTask extends AsyncTask<String, Integer, ArrayList<FoodItem>> {
+        protected ArrayList<FoodItem> doInBackground(String... dishes) {
+            ArrayList<FoodItem> foodItems = new ArrayList<>();
             for (String dish : dishes) {
                 Response<JsonObject> response = getNutrition(dish);
                 FoodItem foodItem = EvaluatorUtils.evaluateResponse(response, dish);
@@ -149,7 +143,8 @@ public class TextSelectionActivity extends AppCompatActivity {
             return foodItems;
         }
 
-        protected void onPostExecute(List<FoodItem> result) {
+        protected void onPostExecute(ArrayList<FoodItem> result) {
+            foodItems=result;
             showList(result);
         }
 
