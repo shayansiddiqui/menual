@@ -54,8 +54,8 @@ public class HistoryFragment extends Fragment {
         list.add("Fish");
         //CustomAdapter arrayAdapter = new CustomAdapter(getActivity(), R.layout.search_catagory_list, prgmImages, prgmNameList);
         ListView lv = (ListView) v.findViewById(R.id.history_tab);
-        MealSuggestionsAdapter mAdaptor = new MealSuggestionsAdapter(list, getContext());
-        lv.setAdapter(mAdaptor);
+//        MealSuggestionsAdapter mAdaptor = new MealSuggestionsAdapter(list, getContext());
+//        lv.setAdapter(mAdaptor);
         return v;
         //return inflater.inflate(R.layout.history_fragment, container, false);
     }
