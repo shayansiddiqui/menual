@@ -3,20 +3,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <CheckBoxPreference
-        android:key="checkbox"
-        android:summary="Tap to check if on or off"
-        android:title="Checkbox Preference" />
-    <RingtonePreference
-        android:key="ringtone"
-        android:showDefault="true"
-        android:showSilent="true"
-        android:summary="Pick a ringtone you like"
-        android:title="Ringtone Preference" />
-    <EditTextPreference
-        android:dialogTitle="Enter a text"
-        android:key="text"
-        android:summary="Click to show a text entry dialog"
-        android:title="EditText Preference" />
+    <Preference
+        android:selectable="true"
+        android:enabled="true"
+        android:key="account_preference_key"
+        android:title="Account"
+        android:summary="Change account settings" />
+
+    <SwitchPreference
+        android:key="notificaitons_key"
+        android:title="Notifications"
+        android:summary="Enable or disable push notifications"
+        android:defaultValue="true"/>
+
+    <de.fbl.menual.utils.YesNoPreference
+        android:dialogMessage="Are you sure you want to delete your scan history?"
+        android:key="clear_history_key"
+        android:summary="Delete your scan history"
+        android:title="Clear History" />
+
+    <de.fbl.menual.utils.YesNoPreference
+        android:dialogMessage="Are you sure you want to log out?"
+        android:key="logout_key"
+        android:summary="Return to login page"
+        android:title="Log out" />
 
 </PreferenceScreen>
