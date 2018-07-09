@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Preference
+        android:selectable="true"
+        android:enabled="true"
+        android:key="account_preference_key"
+        android:title="Account"
+        android:summary="Change account settings" />
+
+    <SwitchPreference
+        android:key="notificaitons_key"
+        android:title="Notifications"
+        android:summary="Enable or disable push notifications"
+        android:defaultValue="true"/>
+
+    <de.fbl.menual.utils.YesNoPreference
+        android:dialogMessage="Are you sure you want to delete your scan history?"
+        android:key="clear_history_key"
+        android:summary="Delete your scan history"
+        android:title="Clear History" />
+
+    <de.fbl.menual.utils.YesNoPreference
+        android:dialogMessage="Are you sure you want to log out?"
+        android:key="logout_key"
+        android:summary="Return to login page"
+        android:title="Log out" />
+
+</PreferenceScreen>
