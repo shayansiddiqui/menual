@@ -13,6 +13,8 @@
     <string name="title_hints">Search database</string>
     <string name="history_tab"></string>
     <string name="title_activity_tab">Interests</string>
+    <string name="title_stats_detailed">Detailed Statistics</string>
+    <string name="title_statistics">Statistics</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>

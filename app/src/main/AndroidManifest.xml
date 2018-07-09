@@ -22,22 +22,25 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <service android:name=".Services.NotificationService" android:exported="false" />
+        <service
+            android:name=".Services.NotificationService"
+            android:exported="false" />
 
         <receiver android:name=".Receivers.BootReceiver">
             <intent-filter>
                 <action android:name="de.fbl.menual" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>>
+            </intent-filter>
+            >
         </receiver>
+        <receiver android:name=".Receivers.AlarmReceiver" />
 
-        <receiver android:name=".Receivers.AlarmReceiver"/>
-
-        <provider android:name=".utils.SuggestionsProvider"
+        <provider
+            android:name=".utils.SuggestionsProvider"
             android:authorities="de.fbl.menual.utils.SuggestionsProvider" />
 
-        <meta-data android:name="android.app.default_searchable"
+        <meta-data
+            android:name="android.app.default_searchable"
             android:value=".SearchableActivity" />
 
         <activity
@@ -46,6 +49,7 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -75,25 +79,32 @@
         </activity>
         <activity
             android:name=".LoginActivity"
-            android:label="@string/title_activity_login">
-
-        </activity>
-
+            android:label="@string/title_activity_login"></activity>
         <activity
             android:name=".StatisticsActivity"
+            android:label="@string/title_statistics"
             android:parentActivityName=".TextSelectionActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:label="@string/title_activity_statistics"
                 android:value=".TextSelectionActivity" />
         </activity>
-
-        <activity android:name=".SearchableActivity" >
+        <activity android:name=".SearchableActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
-            <meta-data android:name="android.app.searchable"
+
+            <meta-data
+                android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
+        </activity>
+        <activity android:name=".StatsDetailedActivity"
+            android:label="@string/title_stats_detailed">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:label="@string/title_activity_statistics"
+                android:value=".StatisticsActivity" />
         </activity>
     </application>
 
