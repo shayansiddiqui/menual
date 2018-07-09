@@ -244,6 +244,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         private void doDetectionAPICall(String encoded) {
+
+//            JsonObject fakeResponse = new JsonParser().parse("{}").getAsJsonObject();
+//            endImageCapture(fakeResponse);
+
             String jsonRequest = createDetectionAPIRequest(encoded);
             Call<JsonObject> callTextDetection = apiInterface.detectText(jsonRequest);
 
@@ -259,7 +263,8 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<JsonObject> call, Throwable t) {
-
+                    System.out.print(t.getMessage());
+                    mDialog.dismiss();
                 }
             });
         }

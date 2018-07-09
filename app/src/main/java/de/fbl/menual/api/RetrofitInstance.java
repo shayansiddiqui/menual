@@ -15,8 +15,8 @@ public class RetrofitInstance {
 
     public static Retrofit getRetrofitInstance() {
         OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(100, TimeUnit.SECONDS)
-                .readTimeout(100,TimeUnit.SECONDS).build();
+                .connectTimeout(5, TimeUnit.MINUTES)
+                .readTimeout(5,TimeUnit.MINUTES).build();
         if (retrofit == null) {
             retrofit = new retrofit2.Retrofit.Builder()
                     .baseUrl(BASE_URL).client(client)

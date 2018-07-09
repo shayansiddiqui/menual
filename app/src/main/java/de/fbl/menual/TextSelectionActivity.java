@@ -36,6 +36,7 @@ import de.fbl.menual.adapters.FoodListAdapter;
 import de.fbl.menual.api.ApiInterface;
 import de.fbl.menual.api.RetrofitInstance;
 import de.fbl.menual.models.FoodItem;
+import de.fbl.menual.utils.Config;
 import de.fbl.menual.utils.Constants;
 import de.fbl.menual.utils.DishRecognizer;
 import de.fbl.menual.utils.EvaluatorUtils;
@@ -58,6 +59,8 @@ public class TextSelectionActivity extends AppCompatActivity {
         apiInterface = RetrofitInstance.getRetrofitInstance().create(ApiInterface.class);
 
         Bundle extras = getIntent().getExtras();
+        if(extras!=null){
+            String filename = (String) extras.get(Constants.DETECTION_RESPONSE_KEY);
         String searchedMeal = extras.get(Constants.SEARCH_QUERY).toString();
         GetNutritionTask getNutritionTask = new GetNutritionTask();
         if(!searchedMeal.isEmpty()){
@@ -66,6 +69,25 @@ public class TextSelectionActivity extends AppCompatActivity {
         } else {
             isFromSearch = false;
             String filename = (String) extras.get(Constants.DETECTION_RESPONSE_KEY);
+
+            StringBuffer fileContent = new StringBuffer();
+            byte[] buffer = new byte[1024];
+            int n;
+            try {
+                FileInputStream fis = TextSelection.this.openFileInput(filename);
+                while ((n = fis.read(buffer)) != -1) {
+                    fileContent.append(new String(buffer, 0, n));
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            JsonElement element = new JsonParser().parse(fileContent.toString());
+            String[] dishes = fetchBlocks(element);
+            GetNutritionTask getNutritionTask =new GetNutritionTask();
+            getNutritionTask.execute(dishes);
+        }
 
             StringBuffer fileContent = new StringBuffer();
             byte[] buffer = new byte[1024];
@@ -85,6 +107,8 @@ public class TextSelectionActivity extends AppCompatActivity {
 //        List<FoodItem> foodItems = new ArrayList<>();
 //        foodItems.add(FoodItem.getMockFoodItem());
 //        showList(foodItems);
+
+    }
             getNutritionTask.execute(dishes);
         }
 
@@ -98,7 +122,14 @@ public class TextSelectionActivity extends AppCompatActivity {
         lView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                showResultAlert(foodItems.get(i));
+
+                Intent myIntent = new Intent(TextSelection.this, StatisticsActivity.class);
+                myIntent.putExtra(Constants.FOOD_ITEM_KEY, foodItems.get(i)); //Optional parameters
+//                myIntent.putExtra(Constants.DETECTION_RESPONSE_KEY, Config.PREVIEW_RESPONSE_FILE_NAME); //Optional parameters
+//                myIntent.putExtra(Constants.MEAL_TYPE_KEY, getMealType());
+                TextSelection.this.startActivity(myIntent);
+
+//                showResultAlert(foodItems.get(i));
             }
         });
         lView.setAdapter(adapter);
