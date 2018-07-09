@@ -6,10 +6,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-import java.io.IOException;
-
-import de.fbl.menual.Fragment.HistoryFragment;
-import de.fbl.menual.Fragment.SuggestionsFragment;
+import de.fbl.menual.Fragments.HistoryFragment;
+import de.fbl.menual.Fragments.SuggestionsFragment;
 import de.fbl.menual.adapters.ViewPageAdapter;
 import de.fbl.menual.utils.Constants;
 

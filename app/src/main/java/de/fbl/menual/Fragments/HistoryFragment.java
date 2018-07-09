@@ -1,21 +1,17 @@
-package de.fbl.menual.Fragment;
+package de.fbl.menual.Fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import de.fbl.menual.R;
 import de.fbl.menual.adapters.MealSuggestionsAdapter;
-import de.fbl.menual.adapters.PreferenceAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
