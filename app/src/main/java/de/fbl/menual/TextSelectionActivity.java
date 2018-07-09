@@ -63,8 +63,8 @@ public class TextSelectionActivity extends AppCompatActivity {
             GetNutritionTask getNutritionTask = new GetNutritionTask();
             if (!searchedMeal.isEmpty()) {
                 isFromSearch = true;
-//                showMockScreen();
-                getNutritionTask.execute(searchedMeal);
+                showMockScreen();
+//                getNutritionTask.execute(searchedMeal);
             } else {
                 isFromSearch = false;
                 StringBuffer fileContent = new StringBuffer();
@@ -82,8 +82,8 @@ public class TextSelectionActivity extends AppCompatActivity {
                 }
                 JsonElement element = new JsonParser().parse(fileContent.toString());
                 String[] dishes = fetchBlocks(element);
-//                showMockScreen();
-                getNutritionTask.execute(dishes);
+                showMockScreen();
+//                getNutritionTask.execute(dishes);
             }
 
         }

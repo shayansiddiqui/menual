@@ -29,6 +29,7 @@
         app:tbMidColor="#ffe500"
         app:tbOnColor="#f44d41"
         app:tbDefaultStatus="mid"
+
         android:id="@+id/preference_switch"
         />
 

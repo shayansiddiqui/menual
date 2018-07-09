@@ -42,6 +42,9 @@ import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.fbl.menual.utils.Config;
+import de.fbl.menual.utils.Constants;
+
 import static android.Manifest.permission.READ_CONTACTS;
 
 /**
@@ -147,7 +150,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-
+            Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
+            myIntent.putExtra(Constants.ACCOUNT, account); //Optional parameters
+            LoginActivity.this.startActivity(myIntent);
             // Signed in successfully, show authenticated UI.
 //            updateUI(account);
         } catch (ApiException e) {
@@ -172,6 +177,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+        System.exit(0);
     }
 
     private void populateAutoComplete() {

@@ -12,4 +12,16 @@ public class Constants {
     public static final String SEARCH_QUERY = "search_query";
     public static final String QUERY_RESPONSE = "query_response";
     public static final String HISTORY_PRESELECT = "query_response";
+    public static final String ACCOUNT = "account";
+
+    public static final String[] prefArray = {
+            "High in Fiber",
+            "Low in Sugar",
+            "High in Vitamines",
+            "High in Minerals",
+            "Healthy Fats",
+            "Meat",
+            "Nuts",
+            "Lactose"
+    };
 }
