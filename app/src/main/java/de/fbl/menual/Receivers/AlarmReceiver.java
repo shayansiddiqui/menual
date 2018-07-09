@@ -13,28 +13,22 @@ import android.support.v4.app.NotificationCompat;
 import de.fbl.menual.DietPreferencesActivity;
 
 import de.fbl.menual.R;
-import de.fbl.menual.StatisticsActivity;
-import de.fbl.menual.TextSelectionActivity;
-import de.fbl.menual.models.FoodItem;
 import de.fbl.menual.utils.Constants;
 
 public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-
         notifiy(context);
     }
 
     public void notifiy(Context context) {
-        Intent intent = new Intent(context, TextSelectionActivity.class);
+        Intent intent = new Intent(context, DietPreferencesActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         createNotificationChannel(context);
         Bitmap mealExample = BitmapFactory.decodeResource(context.getResources(),
-                R.drawable.tuna_sushi_mockup);
-        intent.putExtra(Constants.SEARCH_QUERY, "tuna sushi");
-
-/*      F
+                R.drawable.bitmap_example);
+/*
         String name = c.getString(str_url);
         URL url_value = new URL(name);
         ImageView profile = (ImageView)v.findViewById(R.id.vdo_icon);

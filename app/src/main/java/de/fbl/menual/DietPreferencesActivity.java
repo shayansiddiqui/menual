@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
-import android.preference.Preference;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,8 +14,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 import java.util.ArrayList;
 
-import de.fbl.menual.Fragments.DietPreferenceFragment;
-import de.fbl.menual.Fragments.SettingsFragment;
 import de.fbl.menual.adapters.PreferenceAdapter;
 import de.fbl.menual.utils.Constants;
 import it.beppi.tristatetogglebutton_library.TriStateToggleButton;
@@ -32,24 +28,8 @@ public class DietPreferencesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diet_preferences);
-        getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new DietPreferenceFragment())
-                .commit();
+
         //generate list
-<<<<<<< HEAD
-        /*ArrayList<String> list = new ArrayList<String>();
-        list.add("High fat");
-        list.add("High protien");
-        list.add("High carbohydrates");
-        list.add("High sugar");
-        list.add("Gluten");
-        list.add("Nuts");
-        list.add("Milk");
-        list.add("Eggs");
-        list.add("Meat");
-        list.add("Fish");
-=======
->>>>>>> a62afc363e4e4faa4648365918a2a2669134b5c4
 
         for(String pref: Constants.prefArray){
             list.add(pref);
@@ -62,15 +42,6 @@ public class DietPreferencesActivity extends AppCompatActivity {
 
         //handle listview and assign adapter
         ListView lView = (ListView) findViewById(R.id.preference_list);
-<<<<<<< HEAD
-        lView.setAdapter(adapter);*/
-
-
-
-    }
-
-
-=======
         lView.setAdapter(adapter);
         lView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -80,5 +51,4 @@ public class DietPreferencesActivity extends AppCompatActivity {
             }
         });
     }
->>>>>>> a62afc363e4e4faa4648365918a2a2669134b5c4
 }
