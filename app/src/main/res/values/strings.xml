@@ -7,6 +7,7 @@
     <string name="title_activity_diet_preferences">Diet Preferences</string>
     <string name="action_save">Save</string>
     <string name="title_activity_text_selection">Select Food</string>
+    <string name="title_activity_statistics">Statistics</string>
     <string name="title_activity_login">Sign in</string>
 
     <!-- Strings related to login -->

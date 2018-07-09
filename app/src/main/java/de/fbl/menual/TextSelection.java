@@ -3,6 +3,7 @@ package de.fbl.menual;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -29,6 +30,7 @@ import de.fbl.menual.adapters.PreferenceAdapter;
 import de.fbl.menual.api.ApiInterface;
 import de.fbl.menual.api.RetrofitInstance;
 import de.fbl.menual.models.FoodItem;
+import de.fbl.menual.utils.Config;
 import de.fbl.menual.utils.Constants;
 import de.fbl.menual.utils.DishRecognizer;
 import de.fbl.menual.utils.EvaluatorUtils;
@@ -50,28 +52,32 @@ public class TextSelection extends AppCompatActivity {
         apiInterface = RetrofitInstance.getRetrofitInstance().create(ApiInterface.class);
 
         Bundle extras = getIntent().getExtras();
-        String filename = (String) extras.get(Constants.DETECTION_RESPONSE_KEY);
+        if(extras!=null){
+            String filename = (String) extras.get(Constants.DETECTION_RESPONSE_KEY);
 
-        StringBuffer fileContent = new StringBuffer();
-        byte[] buffer = new byte[1024];
-        int n;
-        try {
-            FileInputStream fis = TextSelection.this.openFileInput(filename);
-            while ((n = fis.read(buffer)) != -1) {
-                fileContent.append(new String(buffer, 0, n));
+            StringBuffer fileContent = new StringBuffer();
+            byte[] buffer = new byte[1024];
+            int n;
+            try {
+                FileInputStream fis = TextSelection.this.openFileInput(filename);
+                while ((n = fis.read(buffer)) != -1) {
+                    fileContent.append(new String(buffer, 0, n));
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            JsonElement element = new JsonParser().parse(fileContent.toString());
+            String[] dishes = fetchBlocks(element);
+            GetNutritionTask getNutritionTask =new GetNutritionTask();
+            getNutritionTask.execute(dishes);
         }
-        JsonElement element = new JsonParser().parse(fileContent.toString());
-        String[] dishes = fetchBlocks(element);
+
 //        List<FoodItem> foodItems = new ArrayList<>();
 //        foodItems.add(FoodItem.getMockFoodItem());
 //        showList(foodItems);
-        GetNutritionTask getNutritionTask =new GetNutritionTask();
-        getNutritionTask.execute(dishes);
+
     }
 
     private void showList(final List<FoodItem> foodItems) {
@@ -81,7 +87,14 @@ public class TextSelection extends AppCompatActivity {
         lView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                showResultAlert(foodItems.get(i));
+
+                Intent myIntent = new Intent(TextSelection.this, StatisticsActivity.class);
+                myIntent.putExtra(Constants.FOOD_ITEM_KEY, foodItems.get(i)); //Optional parameters
+//                myIntent.putExtra(Constants.DETECTION_RESPONSE_KEY, Config.PREVIEW_RESPONSE_FILE_NAME); //Optional parameters
+//                myIntent.putExtra(Constants.MEAL_TYPE_KEY, getMealType());
+                TextSelection.this.startActivity(myIntent);
+
+//                showResultAlert(foodItems.get(i));
             }
         });
         lView.setAdapter(adapter);
