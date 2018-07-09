@@ -19,13 +19,13 @@
     <de.fbl.menual.utils.YesNoPreference
         android:dialogMessage="Are you sure you want to delete your scan history?"
         android:key="clear_history_key"
-        android:summary="Revert all settings to their default values."
+        android:summary="Delete your scan history"
         android:title="Clear History" />
 
     <de.fbl.menual.utils.YesNoPreference
         android:dialogMessage="Are you sure you want to log out?"
         android:key="logout_key"
-        android:summary="Revert all settings to their default values."
+        android:summary="Return to login page"
         android:title="Log out" />
 
 </PreferenceScreen>

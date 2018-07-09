@@ -16,6 +16,9 @@
     <string name="suggestions_tab"></string>
     <string name="history_tab"></string>
     <string name="title_activity_tab">Interests</string>
+    <string name="prefs_settings_header">Settings</string>
+    <string name="prefs_account_header">Account</string>
+    <string name="title_activity_diet_manual">Manual Selection</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
