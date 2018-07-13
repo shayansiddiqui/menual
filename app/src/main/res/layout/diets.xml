@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+   <!-- <PreferenceScreen
+        android:selectable="true"
+        android:enabled="true"
+        android:key="diet_preference_key"
+        android:title="Manual selection"
+        android:summary="Tailor the diet yourself">
+        <intent android:action="android.intent.action.VIEW" />
+    </PreferenceScreen>
+-->
+    <Preference
+        android:selectable="true"
+        android:enabled="true"
+        android:key="diet_preference_key"
+        android:title="Manual selection"
+        android:summary="Tailor the diet yourself">
+     <intent android:action="de.fbl.menual.ManualDietActivity"/>
+    </Preference>
+
+    <CheckBoxPreference
+        android:title="Gain Muscle"
+        android:defaultValue="false"
+        android:summary="Specificaly made to enhance muscle gain"
+        android:key="checkboxPref_gain" />
+
+    <CheckBoxPreference
+        android:title="Lose weight"
+        android:defaultValue="false"
+        android:summary="Tailored for efficient weight loss"
+        android:key="checkboxPref_lose" />
+
+    <CheckBoxPreference
+        android:title="Maintainance"
+        android:defaultValue="true"
+        android:summary="Balanced everyday nutrition"
+        android:key="checkboxPref_maintain" />
+
+</PreferenceScreen>

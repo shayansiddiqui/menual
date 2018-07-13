@@ -1,6 +1,9 @@
 package de.fbl.menual;
 
 import android.content.Intent;
+import android.app.SearchManager;
+import android.content.Context;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,10 +11,12 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarChart;
@@ -47,6 +52,7 @@ public class StatisticsActivity extends AppCompatActivity {
     int resultColor = R.color.yellow;
     double[] statistics = new double[0];
     String[] statisticsText = new String[0];
+    private FoodItem receivedFoodItem;
     FoodItem foodItem;
 
     @Override
@@ -55,6 +61,7 @@ public class StatisticsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_statistics);
         Bundle extras = getIntent().getExtras();
         FoodItem foodItem = (FoodItem) extras.get(Constants.FOOD_ITEM_KEY);
+        receivedFoodItem = foodItem;
         this.foodItem=foodItem;
 
         this.resultColor = getResultColor(foodItem.getResult());
@@ -90,14 +97,33 @@ public class StatisticsActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.statistics_menu, menu);
+
+        return true;
+    }
+
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 StatisticsActivity.this.onBackPressed();
                 return true;
+            case R.id.action_save:
+                saveToHistory();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private boolean saveToHistory(){
+        Intent myIntent = new Intent(this, PlaneTextTabActivity.class);
+        myIntent.putExtra(Constants.FOOD_ITEM_KEY, receivedFoodItem);
+        this.startActivity(myIntent);
+        return true;
     }
 
     private void initializeTotalScoreBar() {
