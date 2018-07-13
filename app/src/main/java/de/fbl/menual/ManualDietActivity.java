@@ -1,29 +1,24 @@
 package de.fbl.menual;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
-import android.preference.Preference;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 
 import de.fbl.menual.Fragments.DietPreferenceFragment;
-import de.fbl.menual.Fragments.SettingsFragment;
 import de.fbl.menual.adapters.PreferenceAdapter;
 
-public class DietPreferencesActivity extends AppCompatActivity {
-
+public class ManualDietActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diet_preferences);
-        getFragmentManager().beginTransaction()
+        /*getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new DietPreferenceFragment())
-                .commit();
+                .commit();*/
         //generate list
-        /*ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<String>();
         list.add("High fat");
         list.add("High protien");
         list.add("High carbohydrates");
@@ -40,7 +35,7 @@ public class DietPreferencesActivity extends AppCompatActivity {
 
         //handle listview and assign adapter
         ListView lView = (ListView) findViewById(R.id.preference_list);
-        lView.setAdapter(adapter);*/
+        lView.setAdapter(adapter);
 
 
 
