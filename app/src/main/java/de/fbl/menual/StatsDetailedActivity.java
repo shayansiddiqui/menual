@@ -1,10 +1,8 @@
 package de.fbl.menual;
 
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -19,10 +17,17 @@ import java.util.ArrayList;
 import de.fbl.menual.models.FoodItem;
 import de.fbl.menual.utils.Constants;
 
+/**
+ * Activity for showing the detailed statistics for the micronutrients as bars.
+ */
 public class StatsDetailedActivity extends AppCompatActivity {
     double[] statistics = new double[0];
     String[] statisticsText = new String[0];
 
+    /**
+     * Shows the micronutrient bars.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

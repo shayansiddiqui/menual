@@ -56,6 +56,9 @@ import retrofit2.Response;
 
 import static android.support.constraint.Constraints.TAG;
 
+/**
+ * MainActivity which displays the camera screen for capturing the menu photo
+ */
 public class MainActivity extends AppCompatActivity {
 
     private Camera mCamera;
@@ -66,6 +69,10 @@ public class MainActivity extends AppCompatActivity {
     private GoogleSignInAccount account;
     private GoogleSignInClient mGoogleSignInClient;
 
+    /**
+     * Loads the camera, sets the aspect ratio and initializes the api interface
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -199,10 +206,10 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
-        if(id == R.id.action_logout){
-             signOut();
-             return true;
-        }
+//        if(id == R.id.action_logout){
+//             signOut();
+//             return true;
+//        }
 
         if (id == R.id.action_settings) {
             Intent myIntent = new Intent(MainActivity.this, SettingsActivity.class);
@@ -245,6 +252,11 @@ public class MainActivity extends AppCompatActivity {
         Bitmap previewImage = null;
         byte[] imgData = null;
 
+        /**
+         * Sends the image data to the detection API and send the response to the TextSelectionActivity for selection
+         * @param data
+         * @param camera
+         */
         @Override
         public void onPictureTaken(byte[] data, final Camera camera) {
             mDialog = ProgressDialog.show(MainActivity.this, "In progress", "Detecting text...", true);
@@ -305,25 +317,25 @@ public class MainActivity extends AppCompatActivity {
             JsonObject fakeResponse = new JsonParser().parse("{}").getAsJsonObject();
             endImageCapture(fakeResponse);
 
-//            String jsonRequest = createDetectionAPIRequest(encoded);
-//            Call<JsonObject> callTextDetection = apiInterface.detectText(jsonRequest);
-//
-//            callTextDetection.enqueue(new Callback<JsonObject>() {
-//                @Override
-//                public void onResponse(@NonNull Call<JsonObject> call, @NonNull Response<JsonObject> response) {
-//                    if (newCacheFileNeeded) {
-//                        FileUtils.createCacheFile(context, Config.CACHED_MENU_TO_USE + ".json");
-//                        FileUtils.writeCacheResponseFile(context, response.body().toString().getBytes());
-//                    }
-//                    endImageCapture(response.body());
-//                }
-//
-//                @Override
-//                public void onFailure(Call<JsonObject> call, Throwable t) {
-//                    System.out.print(t.getMessage());
-//                    mDialog.dismiss();
-//                }
-//            });
+            String jsonRequest = createDetectionAPIRequest(encoded);
+            Call<JsonObject> callTextDetection = apiInterface.detectText(jsonRequest);
+
+            callTextDetection.enqueue(new Callback<JsonObject>() {
+                @Override
+                public void onResponse(@NonNull Call<JsonObject> call, @NonNull Response<JsonObject> response) {
+                    if (newCacheFileNeeded) {
+                        FileUtils.createCacheFile(context, Config.CACHED_MENU_TO_USE + ".json");
+                        FileUtils.writeCacheResponseFile(context, response.body().toString().getBytes());
+                    }
+                    endImageCapture(response.body());
+                }
+
+                @Override
+                public void onFailure(Call<JsonObject> call, Throwable t) {
+                    System.out.print(t.getMessage());
+                    mDialog.dismiss();
+                }
+            });
         }
 
         private void showResponse(File previewImageFile) {

@@ -1,20 +1,20 @@
 package de.fbl.menual;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
-import android.preference.Preference;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.ListView;
-
-import java.util.ArrayList;
+import android.view.MenuItem;
 
 import de.fbl.menual.Fragments.DietPreferenceFragment;
-import de.fbl.menual.Fragments.SettingsFragment;
-import de.fbl.menual.adapters.PreferenceAdapter;
 
+/**
+ * Activity for diet preference selection for the user
+ */
 public class DietPreferencesActivity extends AppCompatActivity {
 
+    /**
+     * Shows the preference fragment
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,29 +22,16 @@ public class DietPreferencesActivity extends AppCompatActivity {
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new DietPreferenceFragment())
                 .commit();
-        //generate list
-        /*ArrayList<String> list = new ArrayList<String>();
-        list.add("High fat");
-        list.add("High protien");
-        list.add("High carbohydrates");
-        list.add("High sugar");
-        list.add("Gluten");
-        list.add("Nuts");
-        list.add("Milk");
-        list.add("Eggs");
-        list.add("Meat");
-        list.add("Fish");
-
-        //instantiate custom adapter
-        PreferenceAdapter adapter = new PreferenceAdapter(list, this);
-
-        //handle listview and assign adapter
-        ListView lView = (ListView) findViewById(R.id.preference_list);
-        lView.setAdapter(adapter);*/
-
-
-
     }
 
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                DietPreferencesActivity.this.onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }

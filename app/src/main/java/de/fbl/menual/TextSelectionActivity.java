@@ -36,6 +36,9 @@ import de.fbl.menual.utils.EvaluatorUtils;
 import retrofit2.Call;
 import retrofit2.Response;
 
+/**
+ * Activity for selecting the detected food item text.
+ */
 public class TextSelectionActivity extends AppCompatActivity {
 
     private ApiInterface apiInterface;
@@ -44,6 +47,10 @@ public class TextSelectionActivity extends AppCompatActivity {
     String searchedMeal="";
     ArrayList<FoodItem> foodItems=new ArrayList<>();
 
+    /**
+     * Shows the detected text from the menu image or searched from the search bar in a list item view.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,8 +70,8 @@ public class TextSelectionActivity extends AppCompatActivity {
             GetNutritionTask getNutritionTask = new GetNutritionTask();
             if (!searchedMeal.isEmpty()) {
                 isFromSearch = true;
-                showMockScreen();
-//                getNutritionTask.execute(searchedMeal);
+//                showMockScreen();
+                getNutritionTask.execute(searchedMeal);
             } else {
                 isFromSearch = false;
                 StringBuffer fileContent = new StringBuffer();
@@ -82,8 +89,8 @@ public class TextSelectionActivity extends AppCompatActivity {
                 }
                 JsonElement element = new JsonParser().parse(fileContent.toString());
                 String[] dishes = fetchBlocks(element);
-                showMockScreen();
-//                getNutritionTask.execute(dishes);
+//                showMockScreen();
+                getNutritionTask.execute(dishes);
             }
 
         }
@@ -107,6 +114,17 @@ public class TextSelectionActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         outState.putString("searchedMeal", searchedMeal);
         outState.putSerializable("foodItems", foodItems);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                TextSelectionActivity.this.onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void showList(final List<FoodItem> foodItems) {

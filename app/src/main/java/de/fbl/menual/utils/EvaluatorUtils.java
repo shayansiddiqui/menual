@@ -185,10 +185,10 @@ public class EvaluatorUtils {
                         comment1 = ("This meal contains not enough " + kriterium1 + "!");
                     if (result1st == 1) {
                         if (e.getDetails()[0] == 1) {
-                            comment1 = ("This meal has too many carbohydrates!");
+                            comment1 = ("This meal has too many fats!");
                         }
                         if (e.getDetails()[1] == 1) {
-                            comment1 = ("This meal has too many fats!");
+                            comment1 = ("This meal has too many carbohydrates!");
                         }
                         int[][] mahlzeit = e.getMahlzeit();
                         int mealtime = 1; //Has to be replaced with actual mealtime

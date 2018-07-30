@@ -41,7 +41,9 @@ public class HistoryFragment extends Fragment {
         super.onCreate(savedInstanceState);
         //setHasOptionsMenu(true);
         Bundle bundle = this.getArguments();
-        foodItems.add((FoodItem) bundle.get(Constants.FOOD_ITEM_KEY));
+        if(bundle!=null){
+            foodItems.add((FoodItem) bundle.get(Constants.FOOD_ITEM_KEY));
+        }
     }
 
 
@@ -58,6 +60,7 @@ public class HistoryFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent myIntent = new Intent(getContext(), StatisticsActivity.class);
                 myIntent.putExtra(Constants.FOOD_ITEM_KEY, foodItems.get(i));
+                myIntent.putExtra(Constants.IS_HISTORY, true);
                 getContext().startActivity(myIntent);
             }
         });

@@ -23,9 +23,11 @@
         android:title="Clear History" />
 
     <de.fbl.menual.utils.YesNoPreference
+        android:id="@+id/logout_action"
         android:dialogMessage="Are you sure you want to log out?"
         android:key="logout_key"
         android:summary="Return to login page"
-        android:title="Log out" />
+        android:title="Log out"
+        />
 
 </PreferenceScreen>

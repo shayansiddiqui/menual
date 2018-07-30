@@ -130,7 +130,7 @@ public class DishRecognizer {
 
     public static String[] removeCommonNonDishWords(String[] candidates)
     {
-        String[] commonNonDishes = {"appeti","dessert","main","course","lunch","breakfast","dinner","ingeidient","menu","drink","side","start","meal","kid","child","reminder","serve","seasonal","everyday","day","select","combination","buffet","specials","general","favorite","recommendation","entrees"};
+        String[] commonNonDishes = {"appeti","dessert","main","course","lunch","breakfast","dinner","ingeidient","menu","drink","side","start","meal","kid","child","reminder","serve","seasonal","everyday","day","select","combination","buffet","specials","general","favorite","recommendation","entrees", "salads", "cheese", "tomato"};
         for(int i = 0; i<candidates.length;i++)
         {
             for(int j = 0; j<commonNonDishes.length;j++)
