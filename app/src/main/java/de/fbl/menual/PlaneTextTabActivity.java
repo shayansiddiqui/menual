@@ -81,7 +81,7 @@ public class PlaneTextTabActivity extends AppCompatActivity {
       ViewPageAdapter adapter = new ViewPageAdapter(getSupportFragmentManager());
       suggestionsFragment=new SuggestionsFragment();
       historyFragment=new HistoryFragment();
-      if(!receivedBundle.equals(null)) {
+      if(receivedBundle!=null) {
           historyFragment.setArguments(receivedBundle);
       }
       adapter.addFragment(suggestionsFragment,"SUGGESTIONS");

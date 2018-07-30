@@ -47,6 +47,9 @@ import de.fbl.menual.adapters.FoodListAdapter;
 import de.fbl.menual.models.FoodItem;
 import de.fbl.menual.utils.Constants;
 
+/**
+ * Shows the statics summary of the food item selected from the TextSelectionActivity
+ */
 public class StatisticsActivity extends AppCompatActivity {
 
     int resultColor = R.color.yellow;
@@ -54,13 +57,20 @@ public class StatisticsActivity extends AppCompatActivity {
     String[] statisticsText = new String[0];
     private FoodItem receivedFoodItem;
     FoodItem foodItem;
+    private boolean isHistory;
 
+    /**
+     * Shows the food color, the score bars and the pie chart of the nutrients distribution
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistics);
         Bundle extras = getIntent().getExtras();
         FoodItem foodItem = (FoodItem) extras.get(Constants.FOOD_ITEM_KEY);
+        isHistory = extras.get(Constants.IS_HISTORY) != null && (boolean) extras.get(Constants.IS_HISTORY);
+
         receivedFoodItem = foodItem;
         this.foodItem=foodItem;
 
@@ -100,7 +110,11 @@ public class StatisticsActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.statistics_menu, menu);
-
+        if(isHistory){
+            MenuItem item = menu.findItem(R.id.action_save);
+            invalidateOptionsMenu();
+            item.setVisible(false);
+        }
         return true;
     }
 

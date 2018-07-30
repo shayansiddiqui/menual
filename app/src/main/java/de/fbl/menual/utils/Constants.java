@@ -13,6 +13,7 @@ public class Constants {
     public static final String QUERY_RESPONSE = "query_response";
     public static final String HISTORY_PRESELECT = "query_response";
     public static final String ACCOUNT = "account";
+    public static final String IS_HISTORY = "history";
 
     public static final String[] prefArray = {
             "High in Fiber",

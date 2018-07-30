@@ -1,9 +1,12 @@
 package de.fbl.menual;
 
 import android.os.Bundle;
+import android.preference.DialogPreference;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 
 import de.fbl.menual.Fragments.SettingsFragment;
+import de.fbl.menual.utils.YesNoPreference;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -18,8 +21,14 @@ public class SettingsActivity extends AppCompatActivity {
                 .commit();
     }
 
-
-
-
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                SettingsActivity.this.onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }
