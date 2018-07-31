@@ -14,6 +14,9 @@ import java.util.Timer;
 
 import de.fbl.menual.Receivers.AlarmReceiver;
 
+/**
+ * Engine for push notifications
+ */
 public class NotificationService extends Service {
     @Nullable
     @Override
@@ -33,11 +36,11 @@ public class NotificationService extends Service {
         Intent intent = new Intent(getBaseContext(), AlarmReceiver.class);
         alarmIntent = PendingIntent.getBroadcast(getBaseContext(), 0, intent, 0);
 
-    // Set the alarm to start at 11:30 PM
+    // Set the alarm to start at 11:30 PM on a daily basis
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 9);
-        calendar.set(Calendar.MINUTE, 10);
+        calendar.set(Calendar.HOUR_OF_DAY, 11);
+        calendar.set(Calendar.MINUTE, 30);
 
         alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                 AlarmManager.INTERVAL_DAY, alarmIntent);

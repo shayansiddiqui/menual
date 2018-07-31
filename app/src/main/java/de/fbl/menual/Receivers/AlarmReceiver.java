@@ -18,6 +18,11 @@ import de.fbl.menual.TextSelectionActivity;
 import de.fbl.menual.models.FoodItem;
 import de.fbl.menual.utils.Constants;
 
+/**
+ * Part of notification mechanism
+ * Triggered by predefined alarm
+ * Populate the notifications with content
+ */
 public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {

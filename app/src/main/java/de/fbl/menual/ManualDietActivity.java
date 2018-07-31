@@ -17,6 +17,10 @@ import de.fbl.menual.adapters.PreferenceAdapter;
 import de.fbl.menual.utils.Constants;
 import it.beppi.tristatetogglebutton_library.TriStateToggleButton;
 
+/**
+ * Display diet preferences for given user. Screen is used by the user to input his/her preferences
+ * which will then be used in the nutritional algorithm
+ */
 public class ManualDietActivity extends AppCompatActivity {
 
     SharedPreferences sharedPref;

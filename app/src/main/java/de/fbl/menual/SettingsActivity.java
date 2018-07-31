@@ -8,6 +8,9 @@ import android.view.MenuItem;
 import de.fbl.menual.Fragments.SettingsFragment;
 import de.fbl.menual.utils.YesNoPreference;
 
+/**
+ * Display general application and account settings
+ */
 public class SettingsActivity extends AppCompatActivity {
 
     @Override
@@ -20,6 +23,12 @@ public class SettingsActivity extends AppCompatActivity {
                 .replace(android.R.id.content, new SettingsFragment())
                 .commit();
     }
+
+    /**
+     * Handle actions and navigation
+     * @param item
+     * @return
+     */
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -12,6 +12,9 @@ import de.fbl.menual.adapters.ViewPageAdapter;
 import de.fbl.menual.models.FoodItem;
 import de.fbl.menual.utils.Constants;
 
+/**
+ * Activity containing both history and
+ */
 public class PlaneTextTabActivity extends AppCompatActivity {
 
     private ViewPager viewPager;

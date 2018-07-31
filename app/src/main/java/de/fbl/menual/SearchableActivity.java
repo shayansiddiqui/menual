@@ -9,6 +9,10 @@ import android.support.v7.app.AppCompatActivity;
 import de.fbl.menual.utils.Constants;
 import de.fbl.menual.utils.SuggestionsProvider;
 
+/**
+ * Activity to handle direct searches with the use of the incorporated APIs
+ */
+
 public class SearchableActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +24,11 @@ public class SearchableActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         handleIntent(intent);
     }
+
+    /**
+     * Open TextSelectionActivity which handles the input from the search field
+     * @param intent
+     */
 
     private void handleIntent(Intent intent) {
         // Get the intent, verify the action and get the query
