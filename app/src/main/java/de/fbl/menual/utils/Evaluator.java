@@ -3,24 +3,27 @@ import java.util.Arrays;
 
 /**
  * @author Christopher Harth-Kitzerow
+ * The Evaluator class receives a structured array of an initially unstructured nutritionix API response aswell as userpreferences to evaluate each dish
+ * on the menu according to DGE standards and user preferences
  *
  */
 public class Evaluator {
     private int[] makroverteilung = {200, 300, 500}; //proteine, Fett Kohlenhydrate Referenzmenge (DGE)
-    private double[] gMakros = {200 / 4, 300 / 9, 500 / 4};
-    private int gballaststoffe = 13;
+    private double[] gMakros = {200 / 4, 300 / 9, 500 / 4}; //represents 20% proteins, 30% fats, 50% carbohydrates. Has to be divided by each kcal value to represent the proportion of total energy.
+    private int gballaststoffe = 13; //gfiber
     private double gfettO6 = (1000 * 0.025) / 9;
     private double gfett03 = (1000 * 0.005) / 9;
     private double[] mgVitamine = {0.9, 20, 13, 65, 1.1, 1.3, 1.3, 1.3, 300, 6, 45, 3, 100}; //A,D(Microgramm),E,K(Microgramm),B1,B2,Niacin ,B6, Folat(Microgramm), Pantothensäure, Biotin, B12(Microgramm), C
     private double[] mgMineralStoffe = {1500, 2300, 4000, 1000, 700, 325, 13, 3.5, 8, 65}; //Natrium, Chlorid, Kalium, Calcium, Phosphor,Magnesium,Eisen, Fluorid, Zink, Selen(Microgramm)
-    private int[][] mahlzeit = {{25, 20, 25, 30}, {30, 35, 30, 30}, {25, 30, 25, 25}, {10, 10, 10, 10}}; //erster Identifier: Frühstück, Mitagessen, Abendessen, Snack. Zweiter Identifier: Energie,Proteine,Fett,KH
-//laut der DGE sollte eine Mahlzeit 10% Zucker am Kalorienanteil nicht überschreiten
+    private int[][] mahlzeit = {{25, 20, 25, 30}, {30, 35, 30, 30}, {25, 30, 25, 25}, {10, 10, 10, 10}};//first identifier: breakfast, lunch, dinner, snack. second identifier: optimal proportion of energy, proteins, fat, carbohydrates
+//DGE tolerates at most 10% sugar in a dish
 
-    private int[] details = new int[25]; //[0]: too many fats [1]: too many carbohydrates [2-14]: good amount of vitamine [15-24]: good amount of mineral
+    private int[] details = new int[25]; //[0]: too many fats [1]: too many carbohydrates [2-14]: good amount of specific vitamin [15-24]: good amount of specific mineral
+    //details is relevant for comment
 
     public int[] getDetails() {
         return details;
-    }
+    } //returns the details array to the comment function to find out for some cases what was good or bad about the dish
 
     public int[][] getMahlzeit() {
         return mahlzeit;
@@ -34,7 +37,12 @@ public class Evaluator {
         return -1;
     }
 
-    public static double[] nutritionXgetCorrectUnits(double[] apiValues) {
+    /**
+     * NutritioniX units do not match with the units we use in our formula. Thus, we need to convert units
+     * @param apiValues
+     * @return converted units
+     */
+        public static double[] nutritionXgetCorrectUnits(double[] apiValues) {
         apiValues[8] = apiValues[8] / 3 / 1000; //Calculating from IU to µg to mg
         apiValues[9] = apiValues[9] / 3; //Calculating from IU to µg
         //Vitamine E,B1,B2,Niacin, B6, Pantothenic acid, B12, C is already in mg, Vitamin K, Folat is already in µg
@@ -48,7 +56,7 @@ public class Evaluator {
     }
 
     /**
-     * Evaluates a Health Score for a Dish. Standard score is 100. >100 = green, >90 = yellow, <90 = red, -1 = not enough information available
+     * Evaluates a Health Score for a Dish. Standard score is 100. >100 = green, >90 = yellow, <90 = red, -1 = not enough information available (-1 never happened only best practices)
      *
      * @param userMahlzeit [0]: breakfast [1]: lunch, [2]: dinner [3]: Snack
      * @param preferences  Importance Multiplier (standard: 1) for [0]: High amount of Proteins [1]: Low amount of fats
@@ -122,6 +130,7 @@ public class Evaluator {
         }
         int vitaminscore = evaluateVitamines(userMahlzeit, aPIVitaminValues);
 
+        //Evaluates all minerals contained in the dish
         double[] aPIMineralValues = Arrays.copyOfRange(aPiValues, 21, 31);
         for (int i = 21; i < 30; i++) {
             if (aPiValues[i] < 0)
@@ -129,16 +138,18 @@ public class Evaluator {
         }
         int mineralScore = evaluateMinerales(userMahlzeit, aPIMineralValues);
 
-        //The followoing evaluations will be added here: Mineralstoffe, eating preferences/disorders
 
 
+
+        //formula to calculate the not normalized total score based on all sub-scores and information richness
         score = makroscore * 2 * (1 - counter[0]) + sugarscore * (1 + (3 * highSugar)) * (1 - counter[1]) + ballaststoffscore * 1 * (1 - counter[2]) + fatscore * counter[3] + (vitaminscore - 100) + (mineralScore - 100);
         if (counter[0] * 2 - counter[1] * (2 + (2 * highSugar)) - counter[2] - (3 - counter[3]) == -10) {
-            System.out.println("Not enough information on dish to evaluate");
+            System.out.println("Not enough information on dish to evaluate"); //Never happens, only for safety to not tell the user we know a result if we in fact do not have enough values to back that up.
             int a[] = {-1};
             return a;
 
         }
+        //final formual to calculate normalized total score. Divides by sum of weight. Weight is dependant on information richness and other factors (high in sugar..)
         score = score / (10 - (3 * (1 - highSugar)) - counter[0] * 2 - counter[1] * 1 - counter[2] - (3 - counter[3]));
         int[] scores = {(int) score, makroscore, sugarscore, ballaststoffscore, fatscore, vitaminscore, mineralScore};
        // System.out.println("total score, makros, sugar, ballast, fat, vitamins, minerals");
@@ -157,6 +168,7 @@ public class Evaluator {
 
     /**
      * Returns a score for the Meal macronutrients composition based of recommended amounts and user preferences
+     * Degree of punishment is dependant on user preference (standard is 1)
      *
      * @param userMahlzeit [0]: breakfast [1]: lunch, [2]: dinner [3]: Snack
      * @param preferences  Importance Multiplier (standard: 1) for: [0]:P [1]: F [2]: C
@@ -172,34 +184,36 @@ public class Evaluator {
         for (int i = 0; i < optimalgMakroverteilung.length; i++)
             sum += optimalgMakroverteilung[i];
         for (int i = 0; i < optimalgMakroverteilung.length; i++)
-            optimalpMakroverteilung[i] = optimalgMakroverteilung[i] / sum; // optimales prozentuales Makroverhältnis
+            optimalpMakroverteilung[i] = optimalgMakroverteilung[i] / sum; // optimal proportion of Macro-nutrients
 
         double[] actualMakroverteilung = APIgMakros;
         sum = 0;
         for (int i = 0; i < APIgMakros.length; i++)
             sum += APIgMakros[i];
         for (int i = 0; i < APIgMakros.length; i++)
-            actualMakroverteilung[i] = APIgMakros[i] / sum; // tatsächliches prozentuales Makroverhältnis
+            actualMakroverteilung[i] = APIgMakros[i] / sum; // actual proportion of Macro-nutrients
 
-        double punishFats = (actualMakroverteilung[1] - optimalpMakroverteilung[1]) * 100 * preferences[0];
+        double punishFats = (actualMakroverteilung[1] - optimalpMakroverteilung[1]) * 100 * preferences[0]; //preferences directly affect the score
         double punishCarbs = (actualMakroverteilung[2] - optimalpMakroverteilung[2]) * 100 * preferences[0];
 
         if (actualMakroverteilung[0] > optimalpMakroverteilung[0])
-            score = score + 0.5 * (actualMakroverteilung[0] - optimalpMakroverteilung[0]) * 100 * preferences[0]; //Pluspunkte für proteinreiche Mahlzeit
+            score = score + 0.5 * (actualMakroverteilung[0] - optimalpMakroverteilung[0]) * 100 * preferences[0]; //bonus points for protein-rich meal
         if (actualMakroverteilung[1] > optimalpMakroverteilung[1])
-            score = score - punishFats; //Strafpunkte für zu viele Fette
+            score = score - punishFats; //punishing points for too much fat
         if (actualMakroverteilung[2] > optimalpMakroverteilung[2])
-            score = score - punishCarbs; //Strafpunkte für zu viele Kohlenhydrate
+            score = score - punishCarbs; //punishing points for too many carbohydrates
 
         if (punishFats > 20)
-            details[0] = 1;
+            details[0] = 1; //saves if there is way too much fat in that dish
         if (punishCarbs > 20)
-            details[1] = 1;
+            details[1] = 1; //save if there are way too many carbs in that dish
 
         return (int) score;
     }
 
     /**
+     * Calculates the sugar core. Starts at 100. Punishes for everything bigger 10% of total energy.
+     * User preferences directly affect score
      * @param preferences preferences for sugar, Standard is 1
      * @param aPIgMakros  grams of each macronutrient in the dish
      * @param aPIgSugar   grams of sugar in the dish
@@ -221,6 +235,15 @@ public class Evaluator {
         return (int) score;
     }
 
+    /**
+     * Evaluates fiber. Starts at 100.
+     * Punishes for less than recommended fiber, rewards for more
+     * User preferences directly affect score
+     * @param userMahlzeit
+     * @param preferences user prefrences, standard is 1
+     * @param APIValue
+     * @return
+     */
     public int evaluateBallaststoffe(int userMahlzeit, int preferences, double APIValue) {
         int score = 100;
         double recommendedB = gballaststoffe * mahlzeit[userMahlzeit][1] / 100; //recommended amount in grams of B for specific meal
@@ -229,6 +252,8 @@ public class Evaluator {
     }
 
     /**
+     * Evaluates healthyness of fat of the meal by reviewing the 4 different fat categories.
+     * Starts at 100, punishes for unhealthy score, rewards for healhy score
      * @param aPIValues [0]: saturated fats, [1]: unsaturated fats, [2]: polyunsaturated fats [3]: transfats
      * @return
      */
@@ -244,9 +269,12 @@ public class Evaluator {
     }
 
     /**
-     * @param userMahlzeit
+     * Evaluates VitaminScore
+     * Each not punishable vitmain that is contained in large proportions adds bonus points.
+     * starts at 100.
+     * @param userMahlzeit [0]: breakfast [1]: lunch, [2]: dinner [3]: Snack
      * @param aPIValues    Same structure as mgVitamine, length: 13
-     * @return [0]: breakfast [1]: lunch, [2]: dinner [3]: Snack
+     * @return VitmainScore
      */
     public int evaluateVitamines(int userMahlzeit, double aPIValues[]) {
         double score = 100;
@@ -261,6 +289,15 @@ public class Evaluator {
         return (int) score;
     }
 
+    /**
+     * Evaluates Minterscore
+     * Each not punishable mineral that is contained in large proportions adds bonus points.
+     * Each mineral with overdose risk in large proportions substracts points.
+     * starts at 100
+     * @param userMahlzeit
+     * @param aPIValues
+     * @return
+     */
     public int evaluateMinerales(int userMahlzeit, double aPIValues[]) {
         double score = 100;
         int multiplier = mahlzeit[userMahlzeit][0];
@@ -275,6 +312,16 @@ public class Evaluator {
         }
         return (int) score;
     }
+
+    /**
+     * Interpretation of the sorted array of statistics.
+     * Used later in the Statistics tab to show each statistical value.
+     * @param foodName
+     * @param apiValues
+     * @param scores
+     * @param mealtype
+     * @return
+     */
 
     public static String[] getStatistics(String foodName, double[] apiValues, int[] scores, int mealtype) {
 
@@ -370,10 +417,10 @@ public class Evaluator {
         statistic[15] = apiValues[31]; //transfats
 
         for (int i = 0; i < 13; i++) {
-            statistic[i + 16] = (apiValues[i + 8] / mgVitamineL[i]); //percentage of each vitamine on daily recommendation
+            statistic[i + 16] = (apiValues[i + 8] / mgVitamineL[i]); //percentage of each vitamin on daily recommendation
         }
         for (int i = 0; i < 10; i++) {
-            statistic[i + 29] = (apiValues[i + 21] / mgMineralStoffeL[i]); //percentage of each mineral on daily recomendation
+            statistic[i + 29] = (apiValues[i + 21] / mgMineralStoffeL[i]); //percentage of each mineral on daily recommendation
         }
 
         for (int i = 0; i < statistic.length; i++) {
@@ -409,11 +456,24 @@ public class Evaluator {
         }
         return wordResult;
     }
+
+    /**
+     * Used for history to display the mealtype of the dish added by the user
+     * @param mealtype
+     * @return
+     */
     public static String getMealtypeString(int mealtype)
     {
-        String[] mealtypeS = {"Breakfast", "Lunch", "Dinner", "Snack"};
+        String[] mealtypeS = {"Breakfast", "Lunch", "Dinner", "Snack"}; //Breakfast, lunch, dinner and snack have different requirements to a dish.
         return mealtypeS[mealtype];
     }
+
+    /**
+     * Explanations on each vitamin, it's function and where to find it.
+     * This information should be displayed when the user tabs on a specific vitamin in statistic tab.
+     * Educational purpose.
+     * @return
+     */
     public static String[][] getVitaminesExplanation() {
         /** identical to the following structure
          *     statistic[16] = "Vitamin A";
@@ -459,6 +519,13 @@ public class Evaluator {
         explanation[12][1] = "Source: Many fruits are rich in vitamin C, including citrus, pineapple, berries and papaya.";
         return explanation;
     }
+
+    /**
+     * Explanations on each mineral, it's function and where to find it.
+     * This information should be displayed when the user tabs on a specific mineral in statistic tab.
+     * Educational purpose.
+     * @return
+     */
     public static String[][] getMineralsExplanation()
     {
         /**
@@ -498,6 +565,12 @@ public class Evaluator {
 
         return explanation;
     }
+
+    /**
+     * Optimal macronutrients explained. Should pop up when the user tabs on the pie chart in the statistics tab.
+     * @param mealtime
+     * @return
+     */
     public static String getMacroExplanation(int mealtime) //for indexes 8-11
     {
         int[][] mahlzeitL = {{25, 20, 25, 30}, {30, 35, 30, 30}, {25, 30, 25, 25}, {10, 10, 10, 10}}; //erster Identifier: Frühstück, Mitagessen, Abendessen, Snack. Zweiter Identifier: Energie,Proteine,Fett,KH
@@ -505,6 +578,11 @@ public class Evaluator {
         String[] mealtypeL = {"Breakfast", "Lunch", "Dinner", "Snack"};
         return ("The optimal " + mealtypeL[mealtime] + " should only consist of a maximum proportion of " + mahlzeitL[mealtime][2] + "% fat and at most " + mahlzeitL[mealtime][3] + "% carbohydrates!");
     }
+
+    /**
+     * Fats explained. Should pop up when the user tabs on the Fat score in the statistic tab.
+     * @return
+     */
     public static String getFatExplanation() //for indexes 12-15
     {
         return "Types of Fat:\n\n" +

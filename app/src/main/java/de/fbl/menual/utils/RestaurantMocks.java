@@ -2,6 +2,10 @@ package de.fbl.menual.utils;
 
 import java.util.ArrayList;
 
+/**
+ * Current mockups of the restaurant database
+ */
+
 public class RestaurantMocks {
 
     private static ArrayList<Restaurant> restaurants=new ArrayList<>();

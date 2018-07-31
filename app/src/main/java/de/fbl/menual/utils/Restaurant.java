@@ -1,12 +1,15 @@
 package de.fbl.menual.utils;
 
+/**
+ * Restaurant Class. A restaurant contains a name, location, kitchentype and Menu
+ */
 public class Restaurant {
 
     private String name;
     private String location;
     private String menu;
     private String kitchenType;
-    public Restaurant(String pname, String plocation, String pmenu, String pkitchentype) //Menu has to be replaced with an actual menu
+    public Restaurant(String pname, String plocation, String pmenu, String pkitchentype) //Menu is a previous user scanned menu and represents the String after response after text detection
     {
         name = pname;
         location=plocation;
