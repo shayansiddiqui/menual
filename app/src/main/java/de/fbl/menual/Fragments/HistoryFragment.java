@@ -25,7 +25,7 @@ import de.fbl.menual.utils.Restaurant;
 import de.fbl.menual.utils.RestaurantMocks;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment to populate
  */
 public class HistoryFragment extends Fragment {
 

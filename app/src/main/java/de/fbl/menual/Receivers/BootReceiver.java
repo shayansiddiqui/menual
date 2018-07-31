@@ -6,6 +6,10 @@ import android.content.Intent;
 
 import de.fbl.menual.Services.NotificationService;
 
+/**
+ * Notification receiver to trigger push notifications even when app is in background
+ */
+
 public class BootReceiver extends BroadcastReceiver {
 
 

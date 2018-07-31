@@ -6,6 +6,9 @@ import android.preference.PreferenceFragment;
 
 import de.fbl.menual.R;
 
+/**
+ * Fragment containing account specific settings
+ */
 public class AccountFragment extends PreferenceFragment {
     @SuppressLint("ResourceType")
     @Override

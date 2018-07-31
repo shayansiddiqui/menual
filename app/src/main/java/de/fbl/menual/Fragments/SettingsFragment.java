@@ -6,6 +6,9 @@ import android.preference.PreferenceFragment;
 
 import de.fbl.menual.R;
 
+/**
+ * Populate settings activity
+ */
 public class SettingsFragment extends PreferenceFragment {
     @SuppressLint("ResourceType")
     @Override

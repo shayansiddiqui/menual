@@ -13,6 +13,9 @@ import de.fbl.menual.ManualDietActivity;
 import de.fbl.menual.R;
 import de.fbl.menual.SettingsActivity;
 
+/**
+ * Fragment which populates the DietPreferencesActivity with content
+ */
 public class DietPreferenceFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
     @SuppressLint("ResourceType")
     @Override
@@ -36,6 +39,11 @@ public class DietPreferenceFragment extends PreferenceFragment implements Shared
         super.onPause();
     }
 
+    /**
+     * Handle actions on predefined diet types
+     * @param sharedPreferences
+     * @param key
+     */
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         System.out.println(key);
