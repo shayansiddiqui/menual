@@ -185,6 +185,11 @@ public class TextSelectionActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Transforms the Google API JSON response into a string response that only has the output we want
+     * @param element
+     * @return
+     */
 
     private String[] fetchBlocks(JsonElement element) {
         if (element != null) {
@@ -198,7 +203,9 @@ public class TextSelectionActivity extends AppCompatActivity {
 
             if (responses != null) {
                 String dishCandidates = responses.getAsJsonArray().get(0).getAsJsonObject().get("textAnnotations").getAsJsonArray().get(0).getAsJsonObject().get("description").toString();
+                //This above gives us the long string out´put we want
                 String[] dishes = DishRecognizer.getDishes(dishCandidates); //This output are our dishes. These have to get passed one by one to the evaluation algorithm
+                //Above, we create a dishrecognizer object to run our dish detection algorithm on the Google API response
                 return dishes;
             }
         }

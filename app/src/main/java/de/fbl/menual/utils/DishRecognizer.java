@@ -1,12 +1,20 @@
 package de.fbl.menual.utils;
 /**
  * @author Christopher Harth-Kitzerow
+ * This class implements the dish recognition algorithm. It receives the Google API JSON response as a long string and derives a list of dish candidates from it.
+ * These dish candidates are then sent to the Nutritionix API to receive nutritional information.
  *
  */
 public class DishRecognizer {
 
+
+    /**
+     * This is the main method that takes the string and sequentially uses all sub-methods to detect dishes through a semantical and syntactical analysis
+     * @param menuText String response from the Google API
+     * @return detected dish candidates
+     */
     public static String[] getDishes(String menuText) {
-        String[] candidates = menuText.replace("\\n", ",").split(",");
+        String[] candidates = menuText.replace("\\n", ",").split(","); //Each row is split by \n to only analyse one row of each Bounding box reveived by the Google API.
         for (int i = 0; i < candidates.length; i++) {
             candidates[i] = removeNoiseAtStart(candidates[i]);
             candidates[i] = removeNonAlphabeticCharacters(candidates[i]);
@@ -21,6 +29,12 @@ public class DishRecognizer {
         return newCandidates;
     }
 
+    /**
+     * Removes any noise prior to a dish.
+     * Example: transform "32.Pizza" to "Pizza"
+     * @param candidates dish candidate
+     * @return dish candidate without noise at start
+     */
     public static String removeNoiseAtStart(String candidates) {
         int nonAlphabetPreceeding = 0;
         int firstLetter = 0;
@@ -35,6 +49,13 @@ public class DishRecognizer {
         return candidates;
     }
 
+    /**
+     * A dish contains only of alphabetic characters.
+     * Thus, every non alphabetic character can be removed.
+     * Detects ingredient structure and deletes them.
+     * @param candidate
+     * @return
+     */
     public static String removeNonAlphabeticCharacters(String candidate) {
         String[] wordCandidates = candidate.split(" ");
         int breakingpoint = -1;
@@ -67,6 +88,12 @@ public class DishRecognizer {
         return candidate;
     }
 
+    /**
+     * Image recognition is not perfect. Words with a length of one or two are usually noise fron the Google API.
+     * @param candidate
+     * @param length minimal length for a candidate do stay in the list
+     * @return
+     */
     public static String wordsWithMinLength(String candidate, int length) {
         if (candidate.length() >= length)
             return candidate;
@@ -75,6 +102,13 @@ public class DishRecognizer {
 
     }
 
+    /**
+     * Too many words do most likely not represent dishes but other text.
+     * Example: "Please sit down and enjoy the atmosphere".
+     * @param candidate
+     * @param length maxiumum number of words for a candidate
+     * @return
+     */
     public static String removeTooManyWordsInString(String candidate, int length) {
         int spaceCounter = 0;
         for (int i = 0; i < candidate.length(); i++) {
@@ -88,8 +122,15 @@ public class DishRecognizer {
 
     }
 
+    /**
+     * Removes common prefixes regardless of upper or lowercase letter from the dish.
+     * Example: "Fresh salad" gets transformed to "salad".
+     * recursively removes preFixes.
+     * @param candidate
+     * @return
+     */
     public static String removeCommonpreFixes(String candidate) {
-        String[] prefixes = {"fresh", "home", "made", "extra"};
+        String[] prefixes = {"fresh", "home", "made", "extra","Crispy"};
         String[] candidateCheck = candidate.split(" ");
         String newCandidate = "";
         for (int i = 0; i < prefixes.length; i++) { //removes prefix and sets string back together
@@ -100,11 +141,19 @@ public class DishRecognizer {
                         newCandidate += " "; //adds spaces between words again to rebuild string
                     }
                 }
-                return removeCommonpreFixes(newCandidate); //Badass recursion to check for more prefixes
+                return removeCommonpreFixes(newCandidate); //recursion to check for more prefixes
             }
         }
         return candidate;
     }
+
+    /**
+     * Due to many string manipulations there might be space at the end of dishes.
+     * These might affect the API response.
+     * The method recursively deletes spaces at the end of a dish.
+     * @param candidate
+     * @return
+     */
     public static String removeSpacesAtTheEnd(String candidate)
     {
         if(candidate.length() < 1)
@@ -122,15 +171,20 @@ public class DishRecognizer {
             {
                 newCandidate+=candidate.charAt(i);
             }
-            return removeSpacesAtTheEnd(newCandidate); //Badass recursion to remove multiple spaces after last word
+            return removeSpacesAtTheEnd(newCandidate); //recursion to remove multiple spaces after last word
         }
     }
 
 
-
+    /**
+     * On almost every menu there are food categories, or other non dishes that should not be included in dish candidate.
+     * Example: "Soups" is a food category and gets deleted. "Appetizers" is a category and gets deeleted"
+     * @param candidates
+     * @return
+     */
     public static String[] removeCommonNonDishWords(String[] candidates)
     {
-        String[] commonNonDishes = {"appeti","dessert","main","course","lunch","breakfast","dinner","ingeidient","menu","drink","side","start","meal","kid","child","reminder","serve","seasonal","everyday","day","select","combination","buffet","specials","general","favorite","recommendation","entrees", "salads", "cheese", "tomato"};
+        String[] commonNonDishes = {"appeti","dessert","main","course","lunch","breakfast","dinner","ingeidient","menu","drink","side","start","meal","kid","child","reminder","serve","seasonal","everyday","day","select","combination","buffet","specials","general","favorite","recommendation","entrees","salads"};
         for(int i = 0; i<candidates.length;i++)
         {
             for(int j = 0; j<commonNonDishes.length;j++)
@@ -143,6 +197,12 @@ public class DishRecognizer {
         }
         return candidates;
     }
+
+    /**
+     * Removes empty strings after string manipulations not make unnecessary API calls.
+     * @param candidates
+     * @return
+     */
     public static String[] removeEmptyStrings(String[] candidates)
     {
         int dishCounter = 0;
@@ -171,6 +231,12 @@ public class DishRecognizer {
         }
         return newCandidates;
     }
+
+    /**
+     * Removes duplicates caused by multiple boxes inside of another in the Google API output
+     * @param candidates
+     * @return
+     */
     public static String[] removeDuplicates(String[] candidates)
     {
         for(int i =0; i < candidates.length;i++)

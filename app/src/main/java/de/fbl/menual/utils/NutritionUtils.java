@@ -15,7 +15,7 @@ import de.fbl.menual.api.RetrofitInstance;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
+//Old class, not longer used
 
 public class NutritionUtils {
 
